@@ -15,18 +15,25 @@ class _ProductManagerState extends State<ProductManager> {
   @override
   void initState() {
     super.initState();
-
   }
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      children: <Widget>[
-        Container(
-          margin: EdgeInsets.all(10.1),
-          child: ProductCard(widget.products), //must sustitud by producs cards
-        ),
-      ],
-    );
+    try {
+
+      Widget _productCard = Center(
+        child: Text('No products found!'),
+      );
+      if (widget.products.length > 0) {
+        _productCard = ProductCard(widget.products);
+      }
+
+      return Expanded(
+        child: _productCard,
+      );
+
+    } catch (e) {
+      return Container();
+    }
   }
 }

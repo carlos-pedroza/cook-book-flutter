@@ -2,7 +2,7 @@ import "package:flutter/material.dart";
 import './product_card.dart';
 
 class ProductManager extends StatefulWidget {
-  final List<String> products;
+  final List<Map<String,String>> products;
   ProductManager(this.products);
 
   @override

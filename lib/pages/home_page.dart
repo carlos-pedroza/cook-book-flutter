@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../service.dart';
+//import '../service.dart';
 import '../product_manager.dart';
 import '../product_control.dart';
 
@@ -11,7 +11,7 @@ class HomePage extends StatefulWidget {
 }
 
 class HomeState extends State<HomePage> {
-  List<String> products = [];
+  List<Map<String, String>> products = [];
 
   int _selectedIndex = 0;
 
@@ -24,11 +24,11 @@ class HomeState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    Service service = Service();
-    products = service.GetProducts();
+    //Service service = Service();
+    //products = service.GetProducts();
   }
 
-  void _addProduct(String product) {
+  void _addProduct(Map product) {
     setState(() {
       products.add(product);
       //debugger(when: _products.length > 2);

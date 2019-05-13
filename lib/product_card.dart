@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import './pages/product_detail_page.dart';
 
 class ProductCard extends StatelessWidget {
-  final List<String> products;
+  final List<Map<String, String>> products;
   ProductCard(this.products);
+
+  final String imageUri = "https://picsum.photos/id/237/400/200";
 
   Widget _buildCard(BuildContext context, int index) {
     try {
@@ -12,11 +14,11 @@ class ProductCard extends StatelessWidget {
           children: <Widget>[
             Container(
               margin: EdgeInsets.all(10.0),
-              child: Image.asset('assets/food.jpg'),
+              child: Image.network(products[index]["image-url"]),
             ),
             Container(
               margin: EdgeInsets.all(5.0),
-              child: Text(products[index]),
+              child: Text(products[index]["title"]),
             ),
             Container(
               margin: EdgeInsets.all(0.0),
@@ -29,7 +31,7 @@ class ProductCard extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                           builder: (BuildContext context) =>
-                              ProductDetailPage(),
+                              ProductDetailPage(products[index]['title'], products[index]['image-url'],),
                         )),
                   ),
                   FlatButton(

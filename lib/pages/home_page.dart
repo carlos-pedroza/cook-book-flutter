@@ -35,6 +35,12 @@ class HomeState extends State<HomePage> {
     });
   }
 
+  void _deleteProduct(Map product) {
+    setState(() {
+      products.remove(product);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,7 +76,7 @@ class HomeState extends State<HomePage> {
                 )),
           ),
           Container(
-            child: ProductManager(products),
+            child: ProductManager(products, _deleteProduct),
           )
         ],
       ),

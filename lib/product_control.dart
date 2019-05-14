@@ -12,7 +12,7 @@ class ProductControl extends StatelessWidget {
       color: Theme.of(context).primaryColor,
       textColor: Colors.white,
       onPressed: () {
-        addProduct({ "title": "Text sample", "image-url": "https://picsum.photos/id/237/400/200" });
+        addProduct({ "title": "Text sample " + DateTime.now().toString(), "image-url": "https://picsum.photos/id/237/400/200" });
       },
       child: Text('Add product'),
     );

@@ -33,7 +33,7 @@ class ProductDetailState extends State<ProductDetailPage> {
             child: RaisedButton(
               color: Theme.of(context).accentColor,
               child: Text('Close'),
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => Navigator.pop(context, true),
             ),
           )
         ],

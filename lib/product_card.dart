@@ -1,9 +1,12 @@
+import 'package:first_app/pages/product_delete.dart';
 import 'package:flutter/material.dart';
 import './pages/product_detail_page.dart';
 
 class ProductCard extends StatelessWidget {
   final List<Map<String, String>> products;
-  ProductCard(this.products);
+  final Function _deleteProduct;
+
+  ProductCard(this.products, this._deleteProduct);
 
   final String imageUri = "https://picsum.photos/id/237/400/200";
 
@@ -27,16 +30,33 @@ class ProductCard extends StatelessWidget {
                 children: <Widget>[
                   FlatButton(
                     child: Text('details'),
-                    onPressed: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (BuildContext context) =>
-                              ProductDetailPage(products[index]['title'], products[index]['image-url'],),
-                        )),
+                    onPressed: () => Navigator.push<bool>(
+                            context,
+                            MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  ProductDetailPage(
+                                    products[index]['title'],
+                                    products[index]['image-url'],
+                                  ),
+                            )).then((bool value) {
+                          print(value);
+                        }),
                   ),
                   FlatButton(
                     child: Text('delete'),
-                    onPressed: () => {},
+                    onPressed: () => Navigator.push<bool>(
+                            context,
+                            MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  ProductDelete(),
+                            ))
+                        .then((bool value) {
+                          if(value != null) {
+                            if(value == true) {
+                              _deleteProduct(products[index]);
+                            }
+                          }
+                        }),
                   ),
                 ],
               ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 //import '../service.dart';
 import '../product_manager.dart';
 import '../product_control.dart';
+import '../pages/product_manager_page.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -12,14 +13,6 @@ class HomePage extends StatefulWidget {
 
 class HomeState extends State<HomePage> {
   List<Map<String, String>> products = [];
-
-  int _selectedIndex = 0;
-
-  void onTap(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
 
   @override
   void initState() {
@@ -43,9 +36,39 @@ class HomeState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    int _selectedIndex = 0;
+
+    void onTap(int index) {
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
+
     return Scaffold(
+      drawer: Drawer(
+        child: Column(
+          children: <Widget>[
+            AppBar(
+              automaticallyImplyLeading: false,
+              title: Text('choose'),
+            ),
+            ListTile(
+              title: Text('Products show'),
+              onTap: () {
+                Navigator.push<bool>(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) =>
+                            ProductManagerPage())).then((bool value) {
+                              Navigator.pop(context);
+                });
+              },
+            ),
+          ],
+        ),
+      ),
       appBar: AppBar(
-        title: Text('Easy List'),
+        title: Text('Product show'),
       ),
       body: Column(
         children: <Widget>[
@@ -93,7 +116,7 @@ class HomeState extends State<HomePage> {
               title: Text('Business'),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.school),
+              icon: Icon(Icons.thumb_up),
               title: Text('School'),
             ),
           ],

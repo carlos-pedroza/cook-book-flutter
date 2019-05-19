@@ -1,4 +1,4 @@
-import 'package:first_app/pages/product_delete.dart';
+import 'package:first_app/pages/product_delete_page.dart';
 import 'package:flutter/material.dart';
 import './pages/product_detail_page.dart';
 
@@ -48,7 +48,7 @@ class ProductCard extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                               builder: (BuildContext context) =>
-                                  ProductDelete(),
+                                  ProductDeletePage(),
                             ))
                         .then((bool value) {
                           if(value != null) {

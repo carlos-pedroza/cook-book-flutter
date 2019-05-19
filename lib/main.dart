@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import './pages/home_page.dart';
+import './pages/auth_page.dart';
+import './pages/product_manager_page.dart';
 
 void main() {
   runApp(MyApp());
@@ -25,7 +26,9 @@ class _MyAppState extends State<MyApp> {
           primaryColor: Color.fromRGBO(255, 87, 34, 1),
           accentColor: Colors.lightGreen,
           dividerColor: Color.fromRGBO(189, 189, 189, 1)),
-      home: HomePage()
+      routes: {
+        '/': (BuildContext context) => AuthPage(),
+      },
     );
   }
 }

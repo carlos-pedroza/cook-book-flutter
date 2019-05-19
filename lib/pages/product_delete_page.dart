@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class ProductDelete extends StatelessWidget {
+class ProductDeletePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

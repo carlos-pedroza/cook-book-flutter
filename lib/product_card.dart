@@ -30,29 +30,19 @@ class ProductCard extends StatelessWidget {
                 children: <Widget>[
                   FlatButton(
                     child: Text('details'),
-                    onPressed: () => Navigator.push<bool>(
-                            context,
-                            MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  ProductDetailPage(
-                                    products[index]['title'],
-                                    products[index]['image-url'],
-                                  ),
-                            )).then((bool value) {
+                    onPressed: () => Navigator.pushNamed<bool>(
+                                context, '/product/' + index.toString())
+                            .then((bool value) {
                           print(value);
                         }),
                   ),
                   FlatButton(
                     child: Text('delete'),
-                    onPressed: () => Navigator.push<bool>(
-                            context,
-                            MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  ProductDeletePage(),
-                            ))
-                        .then((bool value) {
-                          if(value != null) {
-                            if(value == true) {
+                    onPressed: () =>
+                        Navigator.pushNamed<bool>(context, '/delete')
+                            .then((bool value) {
+                          if (value != null) {
+                            if (value == true) {
                               _deleteProduct(products[index]);
                             }
                           }

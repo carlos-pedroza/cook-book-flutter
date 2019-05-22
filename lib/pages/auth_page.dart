@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import '../pages/home_page.dart';
 
 class AuthPage extends StatelessWidget {
+  final List<Map<String, String>> products;
+
+  AuthPage(this.products);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -12,7 +16,7 @@ class AuthPage extends StatelessWidget {
         child: RaisedButton(
           child: Text('LOGIN'),
           onPressed: () {
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => HomePage() ));
+            Navigator.pushReplacementNamed(context, '/home');
           },
         ),
       ),

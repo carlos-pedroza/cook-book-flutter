@@ -5,6 +5,10 @@ import '../product_control.dart';
 import '../pages/product_manager_page.dart';
 
 class HomePage extends StatefulWidget {
+  final List<Map<String, String>> products;
+
+  HomePage(this.products);
+
   @override
   State<StatefulWidget> createState() {
     return HomeState();
@@ -12,8 +16,6 @@ class HomePage extends StatefulWidget {
 }
 
 class HomeState extends State<HomePage> {
-  List<Map<String, String>> products = [];
-
   @override
   void initState() {
     super.initState();
@@ -23,14 +25,14 @@ class HomeState extends State<HomePage> {
 
   void _addProduct(Map product) {
     setState(() {
-      products.add(product);
+      widget.products.add(product);
       //debugger(when: _products.length > 2);
     });
   }
 
   void _deleteProduct(Map product) {
     setState(() {
-      products.remove(product);
+      widget.products.remove(product);
     });
   }
 
@@ -55,12 +57,8 @@ class HomeState extends State<HomePage> {
             ListTile(
               title: Text('Products show'),
               onTap: () {
-                Navigator.push<bool>(
-                    context,
-                    MaterialPageRoute(
-                        builder: (BuildContext context) =>
-                            ProductManagerPage())).then((bool value) {
-                              Navigator.pop(context);
+                Navigator.pushNamed(context, '/admin').then((Object value) {
+                  Navigator.pop(context);
                 });
               },
             ),
@@ -86,7 +84,7 @@ class HomeState extends State<HomePage> {
                   child: ProductControl(_addProduct),
                 ),
                 Expanded(
-                  child: Text('Items:' + products.length.toString(),
+                  child: Text('Items:' + widget.products.length.toString(),
                       textAlign: TextAlign.center),
                 ),
               ],
@@ -99,7 +97,7 @@ class HomeState extends State<HomePage> {
                 )),
           ),
           Container(
-            child: ProductManager(products, _deleteProduct),
+            child: ProductManager(widget.products, _deleteProduct),
           )
         ],
       ),

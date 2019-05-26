@@ -1,8 +1,9 @@
 import "package:flutter/material.dart";
 import './product_card.dart';
+import './models/product.dart';
 
 class ProductManager extends StatefulWidget {
-  final List<Map<String,String>> products;
+  final List<Product> products;
   final Function _deleteProduct;
 
   ProductManager(this.products, this._deleteProduct);

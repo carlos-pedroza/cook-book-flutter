@@ -1,9 +1,10 @@
 import 'package:first_app/pages/product_delete_page.dart';
 import 'package:flutter/material.dart';
 import './pages/product_detail_page.dart';
+import './models/product.dart';
 
 class ProductCard extends StatelessWidget {
-  final List<Map<String, String>> products;
+  final List<Product> products;
   final Function _deleteProduct;
 
   ProductCard(this.products, this._deleteProduct);
@@ -17,11 +18,11 @@ class ProductCard extends StatelessWidget {
           children: <Widget>[
             Container(
               margin: EdgeInsets.all(10.0),
-              child: Image.network(products[index]["image-url"]),
+              child: Image.network(products[index].imageUrl),
             ),
             Container(
               margin: EdgeInsets.all(5.0),
-              child: Text(products[index]["title"]),
+              child: Text(products[index].title),
             ),
             Container(
               margin: EdgeInsets.all(0.0),
@@ -31,7 +32,7 @@ class ProductCard extends StatelessWidget {
                   FlatButton(
                     child: Text('details'),
                     onPressed: () => Navigator.pushNamed<bool>(
-                                context, '/product/' + index.toString())
+                                context, '/detail/' + index.toString())
                             .then((bool value) {
                           print(value);
                         }),

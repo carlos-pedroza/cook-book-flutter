@@ -3,11 +3,14 @@ import 'package:flutter/material.dart';
 import '../product_manager.dart';
 import '../product_control.dart';
 import '../pages/product_manager_page.dart';
+import '../models/product.dart';
 
 class HomePage extends StatefulWidget {
-  final List<Map<String, String>> products;
+  final List<Product> products;
+  Function _addProduct;
+  Function _deleteProduct;
 
-  HomePage(this.products);
+  HomePage(this.products, _addProduct, _deleteProduct);
 
   @override
   State<StatefulWidget> createState() {
@@ -21,19 +24,6 @@ class HomeState extends State<HomePage> {
     super.initState();
     //Service service = Service();
     //products = service.GetProducts();
-  }
-
-  void _addProduct(Map product) {
-    setState(() {
-      widget.products.add(product);
-      //debugger(when: _products.length > 2);
-    });
-  }
-
-  void _deleteProduct(Map product) {
-    setState(() {
-      widget.products.remove(product);
-    });
   }
 
   @override
@@ -75,13 +65,14 @@ class HomeState extends State<HomePage> {
             child: Row(
               children: <Widget>[
                 Expanded(
-                  child: Text(
-                    "Test App",
-                    textAlign: TextAlign.center,
-                  ),
+                  child: ProductControl(widget._addProduct),
                 ),
-                Expanded(
-                  child: ProductControl(_addProduct),
+                IconButton(
+                  icon: Icon(Icons.search),
+                  tooltip: 'Search product',
+                  onPressed: () {
+                    setState(() {});
+                  },
                 ),
                 Expanded(
                   child: Text('Items:' + widget.products.length.toString(),
@@ -97,7 +88,7 @@ class HomeState extends State<HomePage> {
                 )),
           ),
           Container(
-            child: ProductManager(widget.products, _deleteProduct),
+            child: ProductManager(widget.products, widget._deleteProduct),
           )
         ],
       ),

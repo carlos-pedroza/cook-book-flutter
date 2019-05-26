@@ -4,6 +4,7 @@ import './pages/product_manager_page.dart';
 import './pages/product_detail_page.dart';
 import './pages/home_page.dart';
 import './pages/product_delete_page.dart';
+import './models/product.dart';
 
 void main() {
   runApp(MyApp());
@@ -17,7 +18,20 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  List<Map<String, String>> products = [];
+  List<Product> products = [];
+
+  void _addProduct(Product product) {
+    setState(() {
+      this.products.add(product);
+      //debugger(when: _products.length > 2);
+    });
+  }
+
+  void _deleteProduct(Product product) {
+    setState(() {
+      this.products.remove(product);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,21 +45,22 @@ class _MyAppState extends State<MyApp> {
           accentColor: Colors.lightGreen,
           dividerColor: Color.fromRGBO(189, 189, 189, 1)),
       routes: {
-        '/': (BuildContext context) => AuthPage(products),
-        '/home': (BuildContext context) => HomePage(products),
-        '/admin': (BuildContext context) => ProductManagerPage()
+        '/': (BuildContext context) => AuthPage(),
+        '/home': (BuildContext context) =>
+            HomePage(products, _addProduct, _deleteProduct),
+        '/admin': (BuildContext context) => ProductManagerPage(_addProduct)
       },
       onGenerateRoute: (RouteSettings settings) {
         final List<String> pathElements = settings.name.split('/');
         if (pathElements[0] != '') {
           return null;
         }
-        if (pathElements[1] == 'product') {
+        if (pathElements[1] == 'detail') {
           final int index = int.parse(pathElements[2]);
           return MaterialPageRoute<bool>(
             builder: (BuildContext context) => ProductDetailPage(
-                  products[index]['title'],
-                  products[index]['image-url'],
+                  products[index].title,
+                  products[index].imageUrl,
                 ),
           );
         } else if (pathElements[1] == 'delete') {
@@ -56,7 +71,9 @@ class _MyAppState extends State<MyApp> {
         return null;
       },
       onUnknownRoute: (RouteSettings settings) {
-        return MaterialPageRoute(builder: (BuildContext context) => HomePage(products));
+        return MaterialPageRoute(
+            builder: (BuildContext context) =>
+                HomePage(products, _addProduct, _deleteProduct));
       },
     );
   }

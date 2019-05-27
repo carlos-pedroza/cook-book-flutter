@@ -38,6 +38,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       //debugShowMaterialGrid: true,
       theme: ThemeData(
+          fontFamily: 'Verdana, Geneva, sans-serif',
           brightness: Brightness.light,
           primaryColorDark: Colors.deepOrange,
           primaryColorLight: Color.fromRGBO(255, 204, 188, 1),
@@ -78,3 +79,4 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
+

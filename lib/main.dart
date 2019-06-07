@@ -5,12 +5,27 @@ import './pages/product_detail_page.dart';
 import './pages/home_page.dart';
 import './pages/product_delete_page.dart';
 import './models/product.dart';
+import 'package:flutter/services.dart';
 
-void main() {
-  runApp(MyApp());
-}
+//import 'package:flutter/rendering.dart';
+
+void main() => runApp(new MyApp());
 
 class MyApp extends StatefulWidget {
+  List<Product> products = [];
+
+  MyApp() {
+    products.add(Product(
+        "Pulsera inteligente Xiaomi Mi Band 3, Negro",
+        "https://images-na.ssl-images-amazon.com/images/I/516SRTkFwbL._SL1000_.jpg",
+        "Capacidad Batería: 110 mAh (8 días en uso continuo), Pantalla táctil: Sí, Bluetooth 4.2, Color Negro, Con un diseño a prueba de agua de hasta 50 metros",
+        579.97));
+    products.add(Product(
+        "Microwave", "https://picsum.photos/id/0/500/200", "LG Silver", 550));
+    products.add(Product("Mercedes Bens", "https://picsum.photos/id/0/500/200",
+        "A8", 150595.34));
+  }
+
   @override
   State<StatefulWidget> createState() {
     return _MyAppState();
@@ -18,65 +33,63 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  List<Product> products = [];
-
   void _addProduct(Product product) {
     setState(() {
-      this.products.add(product);
+      widget.products.add(product);
       //debugger(when: _products.length > 2);
     });
   }
 
   void _deleteProduct(Product product) {
     setState(() {
-      this.products.remove(product);
+      widget.products.remove(product);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      //debugShowMaterialGrid: true,
-      theme: ThemeData(
-          fontFamily: 'Verdana, Geneva, sans-serif',
-          brightness: Brightness.light,
-          primaryColorDark: Colors.deepOrange,
-          primaryColorLight: Color.fromRGBO(255, 204, 188, 1),
-          primaryColor: Color.fromRGBO(255, 87, 34, 1),
-          accentColor: Colors.lightGreen,
-          dividerColor: Color.fromRGBO(189, 189, 189, 1)),
-      routes: {
-        '/': (BuildContext context) => AuthPage(),
-        '/home': (BuildContext context) =>
-            HomePage(products, _addProduct, _deleteProduct),
-        '/admin': (BuildContext context) => ProductManagerPage(_addProduct)
-      },
-      onGenerateRoute: (RouteSettings settings) {
-        final List<String> pathElements = settings.name.split('/');
-        if (pathElements[0] != '') {
+    Widget materiaApp = MaterialApp(
+        //debugShowMaterialGrid: true,
+        theme: ThemeData(
+            fontFamily: 'Verdana, Geneva, sans-serif',
+            brightness: Brightness.light,
+            primaryColorDark: Colors.deepOrange,
+            primaryColorLight: Color.fromRGBO(255, 204, 188, 1),
+            primaryColor: Color.fromRGBO(255, 87, 34, 1),
+            accentColor: Colors.lightGreen,
+            dividerColor: Color.fromRGBO(189, 189, 189, 1)),
+        routes: {
+          '/': (BuildContext context) => AuthPage(),
+          '/home': (BuildContext context) =>
+              HomePage(widget.products, _addProduct, _deleteProduct),
+          '/admin': (BuildContext context) => ProductManagerPage(_addProduct)
+        },
+        onGenerateRoute: (RouteSettings settings) {
+          final List<String> pathElements = settings.name.split('/');
+          if (pathElements[0] != '') {
+            return null;
+          }
+          if (pathElements[1] == 'detail') {
+            final int index = int.parse(pathElements[2]);
+            return MaterialPageRoute<bool>(
+              builder: (BuildContext context) =>
+                  ProductDetailPage(widget.products[index]),
+            );
+          } else if (pathElements[1] == 'delete') {
+            return MaterialPageRoute<bool>(
+              builder: (BuildContext context) => ProductDeletePage(),
+            );
+          }
           return null;
-        }
-        if (pathElements[1] == 'detail') {
-          final int index = int.parse(pathElements[2]);
-          return MaterialPageRoute<bool>(
-            builder: (BuildContext context) => ProductDetailPage(
-                  products[index].title,
-                  products[index].imageUrl,
-                ),
-          );
-        } else if (pathElements[1] == 'delete') {
-          return MaterialPageRoute<bool>(
-            builder: (BuildContext context) => ProductDeletePage(),
-          );
-        }
-        return null;
-      },
-      onUnknownRoute: (RouteSettings settings) {
-        return MaterialPageRoute(
-            builder: (BuildContext context) =>
-                HomePage(products, _addProduct, _deleteProduct));
-      },
-    );
+        });
+
+                /*if (MediaQuery.of(materiaApp).size.width >
+            MediaQuery.of(materiaApp.context).size.height &&
+        MediaQuery.of(materiaApp.context).size.width > 600.0) {
+      SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+          .then((_) {});
+    }*/
+
+        return materiaApp;
   }
 }
-

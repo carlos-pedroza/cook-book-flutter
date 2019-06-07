@@ -1,70 +1,87 @@
-import 'package:first_app/pages/product_delete_page.dart';
 import 'package:flutter/material.dart';
-import './pages/product_detail_page.dart';
 import './models/product.dart';
+import './widgets/product/price_tag.dart';
+import './widgets/product/address_tag.dart';
 
 class ProductCard extends StatelessWidget {
-  final List<Product> products;
+  final int id;
+  final Product product;
   final Function _deleteProduct;
 
-  ProductCard(this.products, this._deleteProduct);
+  ProductCard(this.id, this.product, this._deleteProduct);
 
-  final String imageUri = "https://picsum.photos/id/237/400/200";
-
-  Widget _buildCard(BuildContext context, int index) {
-    try {
-      return Card(
-        child: Column(
-          children: <Widget>[
-            Container(
-              margin: EdgeInsets.all(10.0),
-              child: Image.network(products[index].imageUrl),
-            ),
-            Container(
-              margin: EdgeInsets.all(5.0),
-              child: Text(products[index].title),
-            ),
-            Container(
-              margin: EdgeInsets.all(0.0),
-              child: ButtonBar(
-                alignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  FlatButton(
-                    child: Text('details'),
-                    onPressed: () => Navigator.pushNamed<bool>(
-                                context, '/detail/' + index.toString())
-                            .then((bool value) {
-                          print(value);
-                        }),
-                  ),
-                  FlatButton(
-                    child: Text('delete'),
-                    onPressed: () =>
-                        Navigator.pushNamed<bool>(context, '/delete')
-                            .then((bool value) {
-                          if (value != null) {
-                            if (value == true) {
-                              _deleteProduct(products[index]);
-                            }
-                          }
-                        }),
-                  ),
-                ],
-              ),
-            ),
-          ],
+  Widget productRow() {
+    return Row(
+      children: <Widget>[
+        Expanded(
+          child: Text(
+            product.title,
+            style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+          ),
         ),
-      );
-    } catch (e) {
-      return Container();
-    }
+        PriceTag(product.price),
+      ],
+    );
+  }
+
+  Widget actionButttons(BuildContext context) {
+    return ButtonBar(
+      alignment: MainAxisAlignment.end,
+      children: <Widget>[
+        IconButton(
+          icon: Icon(Icons.info),
+          color: Theme.of(context).accentColor,
+          onPressed: () =>
+              Navigator.pushNamed<bool>(context, '/detail/' + id.toString())
+                  .then((bool value) {
+                print(value);
+              }),
+        ),
+        IconButton(
+          icon: Icon(Icons.favorite),
+          color: Colors.red,
+          onPressed: () {},
+        ),
+        IconButton(
+          icon: Icon(Icons.delete),
+          color: Colors.redAccent,
+          onPressed: () =>
+              Navigator.pushNamed<bool>(context, '/delete').then((bool value) {
+                if (value != null) {
+                  if (value == true) {
+                    _deleteProduct(product);
+                  }
+                }
+              }),
+        ),
+      ],
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemBuilder: _buildCard,
-      itemCount: products.length,
+    return Card(
+      margin: EdgeInsets.all(20.0),
+      child: Column(
+        children: <Widget>[
+          Container(
+            height: 200.0,
+            margin: EdgeInsets.all(10.0),
+            child: Image.network(product.imageUrl),
+          ),
+          Container(
+            height: 60.0,
+            padding: EdgeInsets.only(left: 10.0, right: 10.0),
+            child: productRow(),
+          ),
+          AddressTag('Union Square, San Francisco'),
+          Divider(),
+          Container(
+            margin: EdgeInsets.all(0.0),
+            child: actionButttons(context),
+          ),
+        ],
+      ),
     );
   }
 }

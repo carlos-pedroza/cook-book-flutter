@@ -23,18 +23,19 @@ class _ProductManagerState extends State<ProductManager> {
   @override
   Widget build(BuildContext context) {
     try {
-
       Widget _productCard = Center(
         child: Text('No products found!'),
       );
       if (widget.products.length > 0) {
-        _productCard = ProductCard(widget.products, widget._deleteProduct);
+        _productCard = ListView.builder(
+          itemBuilder: (BuildContext context, int index) => ProductCard(index, widget.products[index], widget._deleteProduct),
+          itemCount: widget.products.length,
+        );
       }
 
       return Expanded(
         child: _productCard,
       );
-
     } catch (e) {
       return Container();
     }

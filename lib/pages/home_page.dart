@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-//import '../service.dart';
 import '../product_manager.dart';
 import '../product_control.dart';
-import '../pages/product_manager_page.dart';
 import '../models/product.dart';
+import 'package:flutter/services.dart';
 
 class HomePage extends StatefulWidget {
   final List<Product> products;
@@ -20,13 +19,6 @@ class HomePage extends StatefulWidget {
 
 class HomeState extends State<HomePage> {
   @override
-  void initState() {
-    super.initState();
-    //Service service = Service();
-    //products = service.GetProducts();
-  }
-
-  @override
   Widget build(BuildContext context) {
     int _selectedIndex = 0;
 
@@ -37,6 +29,7 @@ class HomeState extends State<HomePage> {
     }
 
     return Scaffold(
+      backgroundColor: Color.fromRGBO(61, 71, 83, 1),
       drawer: Drawer(
         child: Column(
           children: <Widget>[
@@ -45,6 +38,7 @@ class HomeState extends State<HomePage> {
               title: Text('choose'),
             ),
             ListTile(
+              leading: Icon(Icons.add_box),
               title: Text('Products show'),
               onTap: () {
                 Navigator.pushNamed(context, '/admin').then((Object value) {
@@ -52,11 +46,27 @@ class HomeState extends State<HomePage> {
                 });
               },
             ),
+            Divider(
+              height: 1.0,
+              color: Colors.grey,
+            ),
+            ListTile(
+              leading: Icon(Icons.share),
+              title: Text('Share'),
+              onTap: () {},
+            ),
+            Divider(
+              height: 1.0,
+              color: Colors.grey,
+            ),
           ],
         ),
       ),
       appBar: AppBar(
         title: Text('Product show'),
+        actions: <Widget>[
+          IconButton(icon: Icon(Icons.favorite), onPressed: (){},)
+        ],
       ),
       body: Column(
         children: <Widget>[

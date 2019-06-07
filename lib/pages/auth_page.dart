@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class AuthPage extends StatefulWidget {
   @override
@@ -132,8 +133,8 @@ class AuthPageState extends State<AuthPage> {
       imgV = MediaQuery.of(context).size.width.toString();
       imgH = MediaQuery.of(context).size.height.toString();
     }
-    imgV = imgV.substring(0, imgV.length-2);
-    imgH = imgH.substring(0, imgH.length-2);
+    imgV = imgV.substring(0, imgV.length - 2);
+    imgH = imgH.substring(0, imgH.length - 2);
 
     final imageBackUrl = "https://picsum.photos/id/160/" + imgH + "/" + imgV;
 
@@ -169,16 +170,16 @@ class LoginButton extends StatelessWidget {
         minWidth: MediaQuery.of(context).size.width,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
         onPressed: () {
-          if (email == "carlos.pedrozav@gmail.com" &&
-              password == "carlos1970") {
-            Navigator.pushReplacementNamed(context, '/home');
-          } else {
+          //if (email == "carlos.pedrozav@gmail.com" &&
+          //    password == "carlos1970") {
+          Navigator.pushReplacementNamed(context, '/home');
+          /*} else {
             final snackBar = SnackBar(
               content: Text('Invalid user or password'),
               backgroundColor: Colors.red,
             );
             Scaffold.of(context).showSnackBar(snackBar);
-          }
+          }*/
         },
         child: Text("Login",
             textAlign: TextAlign.center,

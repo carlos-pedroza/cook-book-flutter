@@ -11,16 +11,26 @@ class AuthPage extends StatefulWidget {
 class AuthPageState extends State<AuthPage> {
   String email = "";
   String password = "";
+  final GlobalKey<FormState> _formKey = GlobalKey();
 
   final TextStyle style =
       TextStyle(fontFamily: 'Verdana, Geneva, sans-serif', fontSize: 20.0);
   @override
   Widget build(BuildContext context) {
-    final emailField = TextField(
-      onChanged: (value) {
-        setState(() {
-          this.email = value.toLowerCase();
-        });
+    final emailField = TextFormField(
+      onSaved: (value) {
+        this.email = value.toLowerCase();
+      },
+      validator: (String email) {
+        if(email.isEmpty) {
+          return 'The Email is required!';
+        }
+        if(!RegExp(r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?").hasMatch(email) == true) {
+          return 'The Email should be in a correct format!';
+        }
+        if(!ValidEmail(email)) {
+          return 'The email is not valid!';
+        }
       },
       keyboardType: TextInputType.emailAddress,
       obscureText: false,
@@ -33,11 +43,17 @@ class AuthPageState extends State<AuthPage> {
           border:
               OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
     );
-    final passwordField = TextField(
-      onChanged: (value) {
-        setState(() {
-          this.password = value;
-        });
+    final passwordField = TextFormField(
+      onSaved: (value) {
+        this.password = value;
+      },
+      validator: (String password) {
+        if(password.isEmpty) {
+          return 'The password is required';
+        }
+        if(!ValidPassword(password)) {
+          return 'The password is incorrect!';
+        }
       },
       obscureText: true,
       style: style,
@@ -82,7 +98,8 @@ class AuthPageState extends State<AuthPage> {
     );
 
     final formBox = Center(
-      child: Container(
+      child: Form(
+        key: _formKey,
         child: Padding(
           padding: const EdgeInsets.all(36.0),
           child: ListView(
@@ -111,7 +128,7 @@ class AuthPageState extends State<AuthPage> {
               SizedBox(
                 height: 35.0,
               ),
-              LoginButton(style, email, password),
+              LoginButton(style, email, password, _formKey),
               _rememberUserSwitch,
               SizedBox(
                 height: 15.0,
@@ -157,8 +174,9 @@ class LoginButton extends StatelessWidget {
   TextStyle style;
   String email;
   String password;
+  final GlobalKey<FormState> _formKey;
 
-  LoginButton(this.style, this.email, this.password);
+  LoginButton(this.style, this.email, this.password, this._formKey);
 
   @override
   Widget build(BuildContext context) {
@@ -170,16 +188,14 @@ class LoginButton extends StatelessWidget {
         minWidth: MediaQuery.of(context).size.width,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
         onPressed: () {
-          //if (email == "carlos.pedrozav@gmail.com" &&
-          //    password == "carlos1970") {
-          Navigator.pushReplacementNamed(context, '/home');
-          /*} else {
-            final snackBar = SnackBar(
-              content: Text('Invalid user or password'),
-              backgroundColor: Colors.red,
-            );
-            Scaffold.of(context).showSnackBar(snackBar);
-          }*/
+          if(_formKey.currentState.validate()==true) {
+            _formKey.currentState.save();
+            SnackOk(context);
+            Navigator.pushReplacementNamed(context, '/home');
+          }
+          else {
+            SnackError(context);
+          }
         },
         child: Text("Login",
             textAlign: TextAlign.center,
@@ -188,4 +204,24 @@ class LoginButton extends StatelessWidget {
       ),
     );
   }
+}
+
+bool ValidEmail(String email) => (email.trim().toLowerCase()=="carlos.pedrozav@gmail.com");
+
+bool ValidPassword(String password) => (password=='1234');
+
+void SnackOk(BuildContext context) {
+  final snackBar = SnackBar(
+  content: Text('Welcome!'),
+  backgroundColor: Colors.red,
+  );
+  Scaffold.of(context).showSnackBar(snackBar);
+}
+
+void SnackError(BuildContext context) {
+  final snackBar = SnackBar(
+  content: Text('Invalid!'),
+  backgroundColor: Colors.red,
+  );
+  Scaffold.of(context).showSnackBar(snackBar);
 }

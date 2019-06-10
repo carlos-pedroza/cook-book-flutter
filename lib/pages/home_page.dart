@@ -31,33 +31,62 @@ class HomeState extends State<HomePage> {
     return Scaffold(
       backgroundColor: Color.fromRGBO(61, 71, 83, 1),
       drawer: Drawer(
-        child: Column(
+        child: ListView(
           children: <Widget>[
-            AppBar(
-              automaticallyImplyLeading: false,
-              title: Text('choose'),
+            DrawerHeader(
+              child: Center(
+                child: Column(
+                  children: <Widget>[
+                    Material(
+                      elevation: 10,
+                      borderRadius: BorderRadius.all(Radius.circular(60.0)),
+                      child: Padding(
+                        padding: EdgeInsets.all(14),
+                        child: Image.asset(
+                          'assets/images/flutter_ico.png',
+                          width: 80,
+                          height: 80,
+                          fit: BoxFit.scaleDown,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      padding: EdgeInsets.only(
+                        top: 3,
+                      ),
+                      child: Text('Flutter',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                          )),
+                    ),
+                  ],
+                ),
+              ),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: <Color>[
+                    Theme.of(context).primaryColorDark,
+                    Theme.of(context).primaryColorLight,
+                  ],
+                ),
+              ),
             ),
-            ListTile(
-              leading: Icon(Icons.add_box),
-              title: Text('Products show'),
+            CustomlistTile(
+              icon: Icons.add_box,
+              label: 'Products show',
               onTap: () {
                 Navigator.pushNamed(context, '/admin').then((Object value) {
                   Navigator.pop(context);
                 });
               },
             ),
-            Divider(
-              height: 1.0,
-              color: Colors.grey,
-            ),
-            ListTile(
-              leading: Icon(Icons.share),
-              title: Text('Share'),
+            CustomlistTile(
+              icon: Icons.share,
+              label: 'Share',
               onTap: () {},
-            ),
-            Divider(
-              height: 1.0,
-              color: Colors.grey,
             ),
           ],
         ),
@@ -65,7 +94,10 @@ class HomeState extends State<HomePage> {
       appBar: AppBar(
         title: Text('Product show'),
         actions: <Widget>[
-          IconButton(icon: Icon(Icons.favorite), onPressed: (){},)
+          IconButton(
+            icon: Icon(Icons.favorite),
+            onPressed: () {},
+          )
         ],
       ),
       body: Column(
@@ -122,6 +154,51 @@ class HomeState extends State<HomePage> {
           currentIndex: _selectedIndex,
           selectedItemColor: Colors.lightBlueAccent,
           onTap: onTap),
+    );
+  }
+}
+
+class CustomlistTile extends StatelessWidget {
+  IconData _icon;
+  String _label;
+  Function _onTap;
+
+  CustomlistTile({icon: Icons.account_circle, label: "", onTap: Function}) {
+    this._icon = icon;
+    this._label = label;
+    this._onTap = onTap;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        InkWell(
+          child: Row(
+            children: <Widget>[
+              Container(
+                child: Icon(_icon),
+                padding: EdgeInsets.all(16.0),
+              ),
+              Expanded(
+                child: Container(
+                  child: Text(_label),
+                  padding: EdgeInsets.all(16.0),
+                ),
+              ),
+              Container(
+                child: Icon(Icons.arrow_right),
+                padding: EdgeInsets.all(16.0),
+              ),
+            ],
+          ),
+          onTap: this._onTap,
+        ),
+        Divider(
+          height: 1.0,
+          color: Colors.grey,
+        ),
+      ],
     );
   }
 }

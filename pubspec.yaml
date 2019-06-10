@@ -44,6 +44,7 @@ flutter:
   assets:
     - assets/food.jpg
     - assets/images/logo100.png
+    - assets/images/flutter_ico.png
   #  - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

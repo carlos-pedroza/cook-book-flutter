@@ -13,100 +13,107 @@ class ProductCreateTab extends StatefulWidget {
 }
 
 class ProductCreateTabState extends State<ProductCreateTab> {
-  final Product _product =
-      Product("", "https://picsum.photos/id/237/400/200", "", 0.0);
+  final GlobalKey<FormState> _formKey = GlobalKey();
+  Product _product;
+
+  @override
+  void initState() {
+    this._product =
+        Product("", "https://picsum.photos/id/237/400/200", "", 0.0);
+  }
 
   Widget productTitle() {
-    return TextField(
+    return TextFormField(
       decoration: InputDecoration(labelText: "Product title"),
-      onChanged: (String value) {
-        setState(() {
-          _product.title = value;
-        });
+      onSaved: (String value) {
+        this._product.title = value;
+      },
+      validator: (String value) {
+        if (value.isEmpty) {
+          return "Title is required!";
+        }
       },
     );
   }
 
   Widget description() {
-    return TextField(
+    return TextFormField(
       maxLines: 6,
       decoration: InputDecoration(labelText: "Description"),
-      onChanged: (String value) {
-        setState(() {
-          _product.description = value;
-        });
+      onSaved: (String value) {
+        this._product.description = value;
+      },
+      validator: (String value) {
+        if (value.isEmpty) {
+          return "description is required!";
+        }
       },
     );
   }
 
   Widget price() {
-    return TextField(
+    return TextFormField(
       keyboardType: TextInputType.number,
       decoration: InputDecoration(labelText: "Price"),
-      onChanged: (String value) {
-        setState(() {
-          _product.price = double.parse(value);
-        });
+      onSaved: (String value) {
+        this._product.price = double.parse(value);
+      },
+      validator: (String value) {
+        if (value.isEmpty) {
+          return "The price is required!";
+        }
+        if (!RegExp(r'[!@#<>?":_`~;[\]\\|=+)(*&^%0-9-]').hasMatch(value)) {
+          return 'The price should be a number';
+        }
+        if (double.parse(value) <= 0) {
+          return "The price should be greater than zero!";
+        }
       },
     );
   }
 
   Widget buttonSave() {
-    /* return Container(
+    return Container(
       margin: EdgeInsets.all(30.0),
       child: RaisedButton(
         color: Theme.of(context).primaryColor,
         textColor: Colors.white,
         child: Text('SAVE'),
         onPressed: () {
-          saveProduct(_product);
+          saveProduct();
         },
-      ),
-    );*/
-
-    return GestureDetector(
-      onTap: () {
-        saveProduct(_product);
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).primaryColorDark,
-          border: Border.all(
-            color: Colors.grey,
-            width: 2.0,
-          ),
-        ),
-        margin: EdgeInsets.all(10.0),
-        padding: EdgeInsets.all(5),
-        child: Text(
-          'SAVE',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 16.0,
-          ),
-        ),
       ),
     );
   }
 
-  void saveProduct(Product _product) {
-    widget.addProduct(_product);
-    Navigator.pop(context);
+  void saveProduct() {
+    if (_formKey.currentState.validate() == true) {
+      _formKey.currentState.save();
+      widget.addProduct(this._product);
+      Navigator.pop(context);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.all(20.0),
-      child: ListView(
-        children: <Widget>[
-          productTitle(),
-          description(),
-          price(),
-          buttonSave(),
-        ],
+    return GestureDetector(
+      child: Container(
+        margin: EdgeInsets.all(20.0),
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            children: <Widget>[
+              productTitle(),
+              description(),
+              price(),
+              buttonSave(),
+            ],
+          ),
+        ),
       ),
+      onTap: () {
+        FocusScope.of(context).requestFocus(FocusNode());
+      }
     );
   }
 }

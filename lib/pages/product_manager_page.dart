@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 
-import '../pages/tabs/product_create_tab.dart';
+import '../pages/tabs/product_edit_tab.dart';
 import '../pages/tabs/products_list_tab.dart';
+import '../models/product.dart';
 
 class ProductManagerPage extends StatefulWidget {
+  List<Product> _products;
   Function addProduct;
+  Function updateProduct;
+  Function deleteProduct;
 
-  ProductManagerPage(this.addProduct);
+  ProductManagerPage(this.addProduct, this.updateProduct, this.deleteProduct, this._products);
 
   @override
   State<StatefulWidget> createState() {
@@ -34,8 +38,8 @@ class ProductManagePageState extends State<ProductManagerPage> {
         ),
         body: TabBarView(
           children: <Widget>[
-            ProductCreateTab(widget.addProduct),
-            ProductListTab()
+            ProductEditTab(widget.addProduct, null),
+            ProductListTab(widget.updateProduct, widget.deleteProduct,  widget._products),
           ],
         ),
       ),

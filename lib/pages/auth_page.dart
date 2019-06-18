@@ -22,7 +22,7 @@ class AuthPageState extends State<AuthPage> {
         this.email = value.toLowerCase();
       },
       validator: (String email) {
-        if(email.isEmpty) {
+        /*if(email.isEmpty) {
           return 'The Email is required!';
         }
         if(!RegExp(r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?").hasMatch(email) == true) {
@@ -30,7 +30,7 @@ class AuthPageState extends State<AuthPage> {
         }
         if(!ValidEmail(email)) {
           return 'The email is not valid!';
-        }
+        }*/
       },
       keyboardType: TextInputType.emailAddress,
       obscureText: false,
@@ -48,12 +48,12 @@ class AuthPageState extends State<AuthPage> {
         this.password = value;
       },
       validator: (String password) {
-        if(password.isEmpty) {
+        /*if(password.isEmpty) {
           return 'The password is required';
         }
         if(!ValidPassword(password)) {
           return 'The password is incorrect!';
-        }
+        }*/
       },
       obscureText: true,
       style: style,
@@ -125,9 +125,7 @@ class AuthPageState extends State<AuthPage> {
               emailField,
               SizedBox(height: 25.0),
               passwordField,
-              SizedBox(
-                height: 35.0,
-              ),
+              SizedBox(height: 35.0),
               LoginButton(style, email, password, _formKey),
               _rememberUserSwitch,
               SizedBox(
@@ -206,9 +204,9 @@ class LoginButton extends StatelessWidget {
   }
 }
 
-bool ValidEmail(String email) => (email.trim().toLowerCase()=="carlos.pedrozav@gmail.com");
+bool ValidEmail(String email) => true; // (email.trim().toLowerCase()=="carlos.pedrozav@gmail.com");
 
-bool ValidPassword(String password) => (password=='1234');
+bool ValidPassword(String password) => true; // (password=='1234');
 
 void SnackOk(BuildContext context) {
   final snackBar = SnackBar(

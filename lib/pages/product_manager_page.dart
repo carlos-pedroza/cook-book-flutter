@@ -5,13 +5,6 @@ import '../pages/tabs/products_list_tab.dart';
 import '../models/product.dart';
 
 class ProductManagerPage extends StatefulWidget {
-  List<Product> _products;
-  Function addProduct;
-  Function updateProduct;
-  Function deleteProduct;
-
-  ProductManagerPage(this.addProduct, this.updateProduct, this.deleteProduct, this._products);
-
   @override
   State<StatefulWidget> createState() {
     return ProductManagePageState();
@@ -38,8 +31,8 @@ class ProductManagePageState extends State<ProductManagerPage> {
         ),
         body: TabBarView(
           children: <Widget>[
-            ProductEditTab(widget.addProduct, null),
-            ProductListTab(widget.updateProduct, widget.deleteProduct,  widget._products),
+            ProductEditTab(null),
+            ProductListTab(),
           ],
         ),
       ),

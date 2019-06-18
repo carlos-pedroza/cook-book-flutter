@@ -6,9 +6,9 @@ import './widgets/product/address_tag.dart';
 class ProductCard extends StatelessWidget {
   final int id;
   final Product product;
-  final Function _deleteProduct;
+  final Function deleteProduct;
 
-  ProductCard(this.id, this.product, this._deleteProduct);
+  ProductCard(this.id, this.product, this.deleteProduct);
 
   Widget productRow() {
     return Row(
@@ -41,18 +41,6 @@ class ProductCard extends StatelessWidget {
           icon: Icon(Icons.favorite),
           color: Colors.red,
           onPressed: () {},
-        ),
-        IconButton(
-          icon: Icon(Icons.delete),
-          color: Colors.redAccent,
-          onPressed: () =>
-              Navigator.pushNamed<bool>(context, '/delete').then((bool value) {
-                if (value != null) {
-                  if (value == true) {
-                    _deleteProduct(product);
-                  }
-                }
-              }),
         ),
       ],
     );

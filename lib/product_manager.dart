@@ -1,13 +1,10 @@
 import "package:flutter/material.dart";
+import 'package:scoped_model/scoped_model.dart';
+
 import './product_card.dart';
-import './models/product.dart';
+import './scope_models/products_model.dart';
 
 class ProductManager extends StatefulWidget {
-  final List<Product> products;
-  final Function _deleteProduct;
-
-  ProductManager(this.products, this._deleteProduct);
-
   @override
   State<StatefulWidget> createState() {
     return _ProductManagerState();
@@ -16,28 +13,28 @@ class ProductManager extends StatefulWidget {
 
 class _ProductManagerState extends State<ProductManager> {
   @override
-  void initState() {
-    super.initState();
+  Widget build(BuildContext context) {
+    return ScopedModelDescendant<ProductsModel>(
+      builder: (BuildContext context, Widget child, ProductsModel model) {
+        return Expanded(
+          child: createProductCard(context, model),
+        );
+      },
+    );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    try {
-      Widget _productCard = Center(
-        child: Text('No products found!'),
+  Widget createProductCard(BuildContext context, ProductsModel model) {
+    if (model.products.length > 0) {
+      return ListView.builder(
+        itemBuilder: (BuildContext context, int index) {
+          return ProductCard(index, model.products[index], model.deleteProduct);
+        },
+        itemCount: model.products.length,
       );
-      if (widget.products.length > 0) {
-        _productCard = ListView.builder(
-          itemBuilder: (BuildContext context, int index) => ProductCard(index, widget.products[index], widget._deleteProduct),
-          itemCount: widget.products.length,
-        );
-      }
-
-      return Expanded(
-        child: _productCard,
+    } else {
+      return Center(
+        child: Text('No products!'),
       );
-    } catch (e) {
-      return Container();
     }
   }
 }

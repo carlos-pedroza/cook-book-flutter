@@ -1,29 +1,24 @@
 import 'package:first_app/pages/tabs/product_edit_tab.dart';
 import 'package:flutter/material.dart';
-import '../../models/product.dart';
+import 'package:scoped_model/scoped_model.dart';
+import '../../scope_models/products_model.dart';
 
 class ProductListTab extends StatelessWidget {
-  final Function _updateProduct;
-  final Function _deleteProduct;
-  final List<Product> _products;
-
-  ProductListTab(this._updateProduct, this._deleteProduct, this._products);
-
-  Widget _buttonEditProduct(BuildContext context, int index) {
+  Widget _buttonEditProduct(
+      BuildContext context, int index, ProductsModel model) {
     return IconButton(
         icon: Icon(Icons.edit),
         onPressed: () {
           Navigator.of(context).push(
             MaterialPageRoute(builder: (BuildContext context) {
-              return ProductEditTab(_updateProduct, _products[index]);
+              return ProductEditTab(model.products[index]);
             }),
           );
         });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    if (_products.length == 0) {
+  Widget createList(BuildContext context, ProductsModel model) {
+    if (model.products.length == 0) {
       return Center(
         child: Text('No products'),
       );
@@ -31,13 +26,13 @@ class ProductListTab extends StatelessWidget {
       return ListView.builder(
         itemBuilder: (BuildContext context, int index) {
           return Dismissible(
-            key: Key(_products[index].id),
+            key: Key(model.products[index].id),
             background: Container(
               color: Colors.red,
             ),
             onDismissed: (DismissDirection direction) {
               if (direction == DismissDirection.endToStart) {
-                _deleteProduct(_products[index]);
+                model.deleteProduct(model.products[index]);
               }
             },
             child: Column(
@@ -47,19 +42,29 @@ class ProductListTab extends StatelessWidget {
                   padding: EdgeInsets.only(bottom: 10.0),
                   child: ListTile(
                     leading: CircleAvatar(
-                      backgroundImage: NetworkImage(_products[index].imageUrl),
+                      backgroundImage:
+                          NetworkImage(model.products[index].imageUrl),
                     ),
-                    title: Text(_products[index].title),
-                    subtitle: Text('\$ ${_products[index].price}'),
-                    trailing: _buttonEditProduct(context, index),
+                    title: Text(model.products[index].title),
+                    subtitle: Text('\$ ${model.products[index].price}'),
+                    trailing: _buttonEditProduct(context, index, model),
                   ),
                 ),
               ],
             ),
           );
         },
-        itemCount: _products.length,
+        itemCount: model.products.length,
       );
     }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ScopedModelDescendant<ProductsModel>(
+      builder: (BuildContext context, Widget child, ProductsModel model) {
+        return createList(context, model);
+      },
+    );
   }
 }

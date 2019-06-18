@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:scoped_model/scoped_model.dart';
+
+import '../../scope_models/products_model.dart';
 import '../../models/product.dart';
 import '../../utils/ensure-visible.dart';
 
-class ProductEditTab extends StatefulWidget {
-  final Function actionProduct;
-  final Product _product;
 
-  ProductEditTab(this.actionProduct, this._product);
+class ProductEditTab extends StatefulWidget {
+  Product _product;
+  ProductEditTab(this._product);
 
   @override
   State<StatefulWidget> createState() {
@@ -20,21 +22,6 @@ class ProductEditTabState extends State<ProductEditTab> {
   var titleFocusNode = FocusNode();
   var descriptionFocusNode = FocusNode();
   var priceFocusNode = FocusNode();
-
-  @override
-  void initState() {
-    if (widget._product != null) {
-      this._product = Product(
-          widget._product.id,
-          widget._product.title,
-          widget._product.imageUrl,
-          widget._product.description,
-          widget._product.price);
-    } else {
-      this._product =
-          Product("", "", "https://picsum.photos/id/237/400/200", "", 0.0);
-    }
-  }
 
   Widget productTitle() {
     return EnsureVisibleWhenFocused(
@@ -100,7 +87,7 @@ class ProductEditTabState extends State<ProductEditTab> {
     );
   }
 
-  Widget buttonSave() {
+  Widget buttonSave(BuildContext context, ProductsModel model) {
     return Container(
       margin: EdgeInsets.all(30.0),
       child: RaisedButton(
@@ -108,21 +95,21 @@ class ProductEditTabState extends State<ProductEditTab> {
         textColor: Colors.white,
         child: Text('SAVE'),
         onPressed: () {
-          saveProduct();
+          saveProduct(context, model);
         },
       ),
     );
   }
 
-  void saveProduct() {
+  void saveProduct(BuildContext context, ProductsModel model) {
     if (_formKey.currentState.validate() == true) {
       _formKey.currentState.save();
-      widget.actionProduct(this._product);
+      model.addProduct(this._product);
       Navigator.pop(context);
     }
   }
 
-  Widget editForm() {
+  Widget editForm(BuildContext context, ProductsModel model) {
     return GestureDetector(
         child: Container(
           margin: EdgeInsets.all(20.0),
@@ -141,7 +128,7 @@ class ProductEditTabState extends State<ProductEditTab> {
                 productTitle(),
                 description(),
                 price(),
-                buttonSave(),
+                buttonSave(context, model),
               ],
             ),
           ),
@@ -151,21 +138,29 @@ class ProductEditTabState extends State<ProductEditTab> {
         });
   }
 
-  Widget editPage() {
+  Widget editPage(BuildContext context, ProductsModel model) {
       return Scaffold(
         appBar: AppBar(
           title: Text('Edit product'),
         ),
-        body: editForm(),
+        body: editForm(context, model),
       );
   }
 
   @override
   Widget build(BuildContext context) {
+    return ScopedModelDescendant<ProductsModel>(builder: (BuildContext context, Widget child, ProductsModel model) {
+      _product = model.createProduct(product: widget._product,);
+      return createEditWidget(context, model);
+    }); 
+  }
+
+  Widget createEditWidget(BuildContext context, ProductsModel model) {
     if (widget._product != null) {
-      return editPage();
+      return editPage(context, model);
     } else {
-      return editForm();
+      return editForm(context, model);
     }
   }
+
 }

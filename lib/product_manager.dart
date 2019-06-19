@@ -27,9 +27,9 @@ class _ProductManagerState extends State<ProductManager> {
     if (model.products.length > 0) {
       return ListView.builder(
         itemBuilder: (BuildContext context, int index) {
-          return ProductCard(index, model.products[index], model.deleteProduct);
+          return ProductCard(model.mainProducts[index], model);
         },
-        itemCount: model.products.length,
+        itemCount: model.mainProducts.length,
       );
     } else {
       return Center(

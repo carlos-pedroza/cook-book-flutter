@@ -3,7 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import '../../scope_models/products_model.dart';
 
-class ProductListTab extends StatelessWidget {
+class ProductListTab extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return ProductListTabState();
+  }
+
+}
+
+class ProductListTabState extends State<ProductListTab> {
   Widget _buttonEditProduct(
       BuildContext context, int index, ProductsModel model) {
     return IconButton(
@@ -32,7 +40,9 @@ class ProductListTab extends StatelessWidget {
             ),
             onDismissed: (DismissDirection direction) {
               if (direction == DismissDirection.endToStart) {
-                model.deleteProduct(model.products[index]);
+                setState(() {
+                  model.delete(model.products[index].id);
+                });
               }
             },
             child: Column(

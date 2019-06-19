@@ -6,13 +6,15 @@ class Product {
   String imageUrl;
   String description;
   double price;
+  bool isFavorite;
 
   Product(
-      {this.id,
+      {this.id = "",
       @required this.title,
       @required this.imageUrl,
       @required this.description,
-      @required this.price});
+      @required this.price,
+      this.isFavorite = false});
 
   Map<String, dynamic> toMap() {
     return {

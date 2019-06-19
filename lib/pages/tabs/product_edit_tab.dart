@@ -4,10 +4,10 @@ import 'package:scoped_model/scoped_model.dart';
 import '../../scope_models/products_model.dart';
 import '../../models/product.dart';
 import '../../utils/ensure-visible.dart';
-
+import '../../scope_models/products_model.dart';
 
 class ProductEditTab extends StatefulWidget {
-  Product _product;
+  final Product _product;
   ProductEditTab(this._product);
 
   @override
@@ -104,12 +104,18 @@ class ProductEditTabState extends State<ProductEditTab> {
   void saveProduct(BuildContext context, ProductsModel model) {
     if (_formKey.currentState.validate() == true) {
       _formKey.currentState.save();
-      model.addProduct(this._product);
+      setState(() {
+        if (this._product.id == "") {
+          model.add(this._product);
+        } else {
+          model.update(this._product);
+        }
+      });
       Navigator.pop(context);
     }
   }
 
-  Widget editForm(BuildContext context, ProductsModel model) {
+  Widget formWidget(BuildContext context, ProductsModel model) {
     return GestureDetector(
         child: Container(
           margin: EdgeInsets.all(20.0),
@@ -139,28 +145,30 @@ class ProductEditTabState extends State<ProductEditTab> {
   }
 
   Widget editPage(BuildContext context, ProductsModel model) {
-      return Scaffold(
-        appBar: AppBar(
-          title: Text('Edit product'),
-        ),
-        body: editForm(context, model),
-      );
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Edit product'),
+      ),
+      body: formWidget(context, model),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return ScopedModelDescendant<ProductsModel>(builder: (BuildContext context, Widget child, ProductsModel model) {
-      _product = model.createProduct(product: widget._product,);
+    return ScopedModelDescendant<ProductsModel>(
+        builder: (BuildContext context, Widget child, ProductsModel model) {
+      _product = model.create(
+        product: widget._product,
+      );
       return createEditWidget(context, model);
-    }); 
+    });
   }
 
   Widget createEditWidget(BuildContext context, ProductsModel model) {
-    if (widget._product != null) {
+    if (widget._product.id != "") {
       return editPage(context, model);
     } else {
-      return editForm(context, model);
+      return formWidget(context, model);
     }
   }
-
 }

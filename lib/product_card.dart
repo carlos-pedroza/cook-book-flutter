@@ -1,25 +1,33 @@
+import 'package:first_app/scope_models/products_model.dart';
 import 'package:flutter/material.dart';
 import './models/product.dart';
 import './widgets/product/price_tag.dart';
 import './widgets/product/address_tag.dart';
 
-class ProductCard extends StatelessWidget {
-  final int id;
+class ProductCard extends StatefulWidget {
   final Product product;
-  final Function deleteProduct;
+  final ProductsModel model;
 
-  ProductCard(this.id, this.product, this.deleteProduct);
+  ProductCard(this.product, this.model);
 
+  @override
+  State<StatefulWidget> createState() {
+    return ProductCardState();
+  }
+
+}
+
+class ProductCardState extends State<ProductCard> {
   Widget productRow() {
     return Row(
       children: <Widget>[
         Expanded(
           child: Text(
-            product.title,
+            widget.product.title,
             style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
           ),
         ),
-        PriceTag(product.price),
+        PriceTag(widget.product.price),
       ],
     );
   }
@@ -32,15 +40,19 @@ class ProductCard extends StatelessWidget {
           icon: Icon(Icons.info),
           color: Theme.of(context).accentColor,
           onPressed: () =>
-              Navigator.pushNamed<bool>(context, '/detail/' + id.toString())
+              Navigator.pushNamed<bool>(context, '/detail/' + widget.product.id)
                   .then((bool value) {
                 print(value);
               }),
         ),
         IconButton(
           icon: Icon(Icons.favorite),
-          color: Colors.red,
-          onPressed: () {},
+          color: widget.product.isFavorite ? Colors.red : Colors.blueGrey,
+          onPressed: () {
+            setState(() {
+              widget.model.toggleFavorite(widget.product.id);
+            });
+          },
         ),
       ],
     );
@@ -55,7 +67,7 @@ class ProductCard extends StatelessWidget {
           Container(
             height: 200.0,
             margin: EdgeInsets.all(10.0),
-            child: Image.network(product.imageUrl),
+            child: Image.network(widget.product.imageUrl),
           ),
           Container(
             height: 60.0,

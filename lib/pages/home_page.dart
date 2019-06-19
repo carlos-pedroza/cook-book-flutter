@@ -94,7 +94,12 @@ class HomeState extends State<HomePage> {
           actions: <Widget>[
             IconButton(
               icon: Icon(Icons.favorite),
-              onPressed: () {},
+              color: model.isFilterFavorite ? Colors.lightBlueAccent : Colors.white,
+              onPressed: () {
+                setState(() {
+                  model.toggleFilterFavorite();
+                });
+              },
             )
           ],
         ),

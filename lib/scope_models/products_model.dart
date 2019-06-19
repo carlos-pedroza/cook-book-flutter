@@ -5,9 +5,21 @@ import '../models/product.dart';
 class ProductsModel extends Model {
   List<Product> _products;
   Uuid uuid;
+  bool isFilterFavorite = false;
 
   List<Product> get products {
     return List.from(_products);
+  }
+
+  List<Product> get mainProducts {
+    return !isFilterFavorite
+        ? List.from(_products)
+        : List.from(_products.where((p) => p.isFavorite));
+  }
+
+  Product get(String _id) {
+    return _products.firstWhere((Product _product) => _product.id == _id,
+        orElse: () => null);
   }
 
   ProductsModel() {
@@ -16,12 +28,12 @@ class ProductsModel extends Model {
     sampleTest();
   }
 
-  void addProduct(Product product) {
+  void add(Product product) {
     product.id = uuid.v1();
     _products.add(product);
   }
 
-  void updateProduct(Product editProduct) {
+  void update(Product editProduct) {
     Product product = _products.firstWhere(
         (Product _product) => _product.id == editProduct.id,
         orElse: () => null);
@@ -31,17 +43,23 @@ class ProductsModel extends Model {
     product.price = editProduct.price;
   }
 
-  void deleteProduct(Product product) {
-    _products.remove(product);
+  void delete(String _id) {
+    Product product =
+        _products.firstWhere((Product p) => p.id == _id, orElse: () => null);
+    if (product != null) {
+      _products.remove(product);
+    }
   }
 
-  Product createProduct({Product product}) {
+  Product create({Product product}) {
     if (product == null) {
+      String productImage =
+          "https://images-na.ssl-images-amazon.com/images/I/81fdRep8ucL._SL1500_.jpg";
       return Product(
           id: "",
           title: "",
           description: "",
-          imageUrl: "https://picsum.photos/id/237/400/200",
+          imageUrl: productImage,
           price: 0.0);
     } else {
       return Product(
@@ -51,6 +69,16 @@ class ProductsModel extends Model {
           description: product.description,
           price: product.price);
     }
+  }
+
+  toggleFavorite(String _id) {
+    Product product =
+        _products.firstWhere((Product p) => p.id == _id, orElse: () => null);
+    product.isFavorite = !product.isFavorite;
+  }
+
+  toggleFilterFavorite() {
+    isFilterFavorite = !isFilterFavorite;
   }
 
   sampleTest() {

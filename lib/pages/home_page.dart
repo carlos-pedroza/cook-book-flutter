@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
-import '../scope_models/products_model.dart';
+import '../scope_models/main_model.dart';
 import '../product_manager.dart';
 import '../product_control.dart';
 
@@ -24,8 +24,8 @@ class HomeState extends State<HomePage> {
       });
     }
 
-    return ScopedModelDescendant<ProductsModel>(
-        builder: (BuildContext context, Widget child, ProductsModel model) {
+    return ScopedModelDescendant<MainModel>(
+        builder: (BuildContext context, Widget child, MainModel model) {
       return Scaffold(
         backgroundColor: Color.fromRGBO(61, 71, 83, 1),
         drawer: Drawer(

@@ -4,7 +4,7 @@ import 'package:scoped_model/scoped_model.dart';
 import '../../scope_models/products_model.dart';
 import '../../models/product.dart';
 import '../../utils/ensure-visible.dart';
-import '../../scope_models/products_model.dart';
+import '../../scope_models/main_model.dart';
 
 class ProductEditTab extends StatefulWidget {
   final Product _product;
@@ -155,9 +155,9 @@ class ProductEditTabState extends State<ProductEditTab> {
 
   @override
   Widget build(BuildContext context) {
-    return ScopedModelDescendant<ProductsModel>(
-        builder: (BuildContext context, Widget child, ProductsModel model) {
-      _product = model.create(
+    return ScopedModelDescendant<MainModel>(
+        builder: (BuildContext context, Widget child, MainModel model) {
+      _product = model.preparedProduct(
         product: widget._product,
       );
       return createEditWidget(context, model);

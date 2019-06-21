@@ -4,7 +4,7 @@ import 'package:scoped_model/scoped_model.dart';
 import '../pages/tabs/product_edit_tab.dart';
 import '../pages/tabs/products_list_tab.dart';
 
-import '../scope_models/products_model.dart';
+import '../scope_models/main_model.dart';
 
 class ProductManagerPage extends StatefulWidget {
   @override
@@ -33,8 +33,8 @@ class ProductManagePageState extends State<ProductManagerPage> {
         ),
         body: TabBarView(
           children: <Widget>[
-            ScopedModelDescendant(builder: (BuildContext context, Widget child, ProductsModel model) {
-              return ProductEditTab(model.create());
+            ScopedModelDescendant<MainModel>(builder: (BuildContext context, Widget child, MainModel model) {
+              return ProductEditTab(model.preparedProduct());
             }),
             ProductListTab(),
           ],

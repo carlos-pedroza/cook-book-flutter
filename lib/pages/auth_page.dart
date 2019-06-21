@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:scoped_model/scoped_model.dart';
+
+import '../models/user.dart';
+import '../scope_models/main_model.dart';
 
 class AuthPage extends StatefulWidget {
   @override
@@ -9,8 +13,7 @@ class AuthPage extends StatefulWidget {
 }
 
 class AuthPageState extends State<AuthPage> {
-  String email = "";
-  String password = "";
+  User user = User(email: "", password: "");
   final GlobalKey<FormState> _formKey = GlobalKey();
 
   final TextStyle style =
@@ -19,7 +22,7 @@ class AuthPageState extends State<AuthPage> {
   Widget build(BuildContext context) {
     final emailField = TextFormField(
       onSaved: (value) {
-        this.email = value.toLowerCase();
+        user.email = value.toLowerCase();
       },
       validator: (String email) {
         /*if(email.isEmpty) {
@@ -28,9 +31,7 @@ class AuthPageState extends State<AuthPage> {
         if(!RegExp(r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?").hasMatch(email) == true) {
           return 'The Email should be in a correct format!';
         }
-        if(!ValidEmail(email)) {
-          return 'The email is not valid!';
-        }*/
+        */
       },
       keyboardType: TextInputType.emailAddress,
       obscureText: false,
@@ -45,14 +46,11 @@ class AuthPageState extends State<AuthPage> {
     );
     final passwordField = TextFormField(
       onSaved: (value) {
-        this.password = value;
+        user.password = value;
       },
       validator: (String password) {
         /*if(password.isEmpty) {
           return 'The password is required';
-        }
-        if(!ValidPassword(password)) {
-          return 'The password is incorrect!';
         }*/
       },
       obscureText: true,
@@ -126,7 +124,7 @@ class AuthPageState extends State<AuthPage> {
               SizedBox(height: 25.0),
               passwordField,
               SizedBox(height: 35.0),
-              LoginButton(style, email, password, _formKey),
+              LoginButton(style, user, _formKey),
               _rememberUserSwitch,
               SizedBox(
                 height: 15.0,
@@ -170,11 +168,10 @@ class AuthPageState extends State<AuthPage> {
 
 class LoginButton extends StatelessWidget {
   TextStyle style;
-  String email;
-  String password;
+  User user;
   final GlobalKey<FormState> _formKey;
 
-  LoginButton(this.style, this.email, this.password, this._formKey);
+  LoginButton(this.style, this.user, this._formKey);
 
   @override
   Widget build(BuildContext context) {
@@ -182,44 +179,47 @@ class LoginButton extends StatelessWidget {
       elevation: 5.0,
       borderRadius: BorderRadius.circular(30.0),
       color: Color(0xff01A0C7),
-      child: MaterialButton(
-        minWidth: MediaQuery.of(context).size.width,
-        padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-        onPressed: () {
-          if(_formKey.currentState.validate()==true) {
-            _formKey.currentState.save();
-            SnackOk(context);
-            Navigator.pushReplacementNamed(context, '/home');
-          }
-          else {
-            SnackError(context);
-          }
-        },
-        child: Text("Login",
-            textAlign: TextAlign.center,
-            style: style.copyWith(
-                color: Colors.white, fontWeight: FontWeight.bold)),
+      child: ScopedModelDescendant(
+        builder: (BuildContext context, Widget child, MainModel model) =>
+            MaterialButton(
+              minWidth: MediaQuery.of(context).size.width,
+              padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+              onPressed: () {
+                _submit(context, _formKey, user, model);
+              },
+              child: Text("Login",
+                  textAlign: TextAlign.center,
+                  style: style.copyWith(
+                      color: Colors.white, fontWeight: FontWeight.bold)),
+            ),
       ),
     );
   }
 }
 
-bool ValidEmail(String email) => true; // (email.trim().toLowerCase()=="carlos.pedrozav@gmail.com");
-
-bool ValidPassword(String password) => true; // (password=='1234');
-
 void SnackOk(BuildContext context) {
   final snackBar = SnackBar(
-  content: Text('Welcome!'),
-  backgroundColor: Colors.red,
+    content: Text('Welcome!'),
+    backgroundColor: Colors.red,
   );
   Scaffold.of(context).showSnackBar(snackBar);
 }
 
 void SnackError(BuildContext context) {
   final snackBar = SnackBar(
-  content: Text('Invalid!'),
-  backgroundColor: Colors.red,
+    content: Text('Invalid!'),
+    backgroundColor: Colors.red,
   );
   Scaffold.of(context).showSnackBar(snackBar);
+}
+
+void _submit(BuildContext context, GlobalKey<FormState> _formKey, User user, MainModel model) {
+  if (_formKey.currentState.validate() == true) {
+    _formKey.currentState.save();
+    model.login(user);
+    SnackOk(context);
+    Navigator.pushReplacementNamed(context, '/home');
+  } else {
+    SnackError(context);
+  }
 }

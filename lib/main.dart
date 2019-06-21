@@ -9,7 +9,7 @@ import './pages/home_page.dart';
 import './pages/product_delete_page.dart';
 import './pages/product_detail_page.dart';
 
-import './scope_models/products_model.dart';
+import './scope_models/main_model.dart';
 
 //import 'package:flutter/rendering.dart';
 
@@ -25,10 +25,10 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    return ScopedModel<ProductsModel>(
-      model: ProductsModel(),
-      child: ScopedModelDescendant(
-        builder: (BuildContext context, Widget child, ProductsModel model) {
+    return ScopedModel<MainModel>(
+      model: MainModel(),
+      child: ScopedModelDescendant<MainModel>(
+        builder: (BuildContext context, Widget child, MainModel model) {
           return MaterialApp(
               //debugShowMaterialGrid: true,
               theme: ThemeData(

@@ -1,7 +1,7 @@
 import 'package:first_app/pages/tabs/product_edit_tab.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
-import '../../scope_models/products_model.dart';
+import '../../scope_models/main_model.dart';
 
 class ProductListTab extends StatefulWidget {
   @override
@@ -13,20 +13,22 @@ class ProductListTab extends StatefulWidget {
 
 class ProductListTabState extends State<ProductListTab> {
   Widget _buttonEditProduct(
-      BuildContext context, int index, ProductsModel model) {
+      BuildContext context, int index, MainModel model) {
     return IconButton(
         icon: Icon(Icons.edit),
         onPressed: () {
           Navigator.of(context).push(
             MaterialPageRoute(builder: (BuildContext context) {
-              return ProductEditTab(model.products[index]);
+              return ProductEditTab(model.allProducts[index]);
             }),
-          );
+          ).then((dynamic value ) {
+            Navigator.pop(context);
+          });
         });
   }
 
-  Widget createList(BuildContext context, ProductsModel model) {
-    if (model.products.length == 0) {
+  Widget createList(BuildContext context, MainModel model) {
+    if (model.allProducts.length == 0) {
       return Center(
         child: Text('No products'),
       );
@@ -34,14 +36,14 @@ class ProductListTabState extends State<ProductListTab> {
       return ListView.builder(
         itemBuilder: (BuildContext context, int index) {
           return Dismissible(
-            key: Key(model.products[index].id),
+            key: Key(model.allProducts[index].id),
             background: Container(
               color: Colors.red,
             ),
             onDismissed: (DismissDirection direction) {
               if (direction == DismissDirection.endToStart) {
                 setState(() {
-                  model.delete(model.products[index].id);
+                  model.delete(model.allProducts[index].id);
                 });
               }
             },
@@ -53,10 +55,10 @@ class ProductListTabState extends State<ProductListTab> {
                   child: ListTile(
                     leading: CircleAvatar(
                       backgroundImage:
-                          NetworkImage(model.products[index].imageUrl),
+                          NetworkImage(model.allProducts[index].imageUrl),
                     ),
-                    title: Text(model.products[index].title),
-                    subtitle: Text('\$ ${model.products[index].price}'),
+                    title: Text(model.allProducts[index].title),
+                    subtitle: Text('\$ ${model.allProducts[index].price}'),
                     trailing: _buttonEditProduct(context, index, model),
                   ),
                 ),
@@ -64,15 +66,15 @@ class ProductListTabState extends State<ProductListTab> {
             ),
           );
         },
-        itemCount: model.products.length,
+        itemCount: model.allProducts.length,
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return ScopedModelDescendant<ProductsModel>(
-      builder: (BuildContext context, Widget child, ProductsModel model) {
+    return ScopedModelDescendant<MainModel>(
+      builder: (BuildContext context, Widget child, MainModel model) {
         return createList(context, model);
       },
     );

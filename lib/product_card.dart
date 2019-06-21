@@ -60,6 +60,7 @@ class ProductCardState extends State<ProductCard> {
 
   @override
   Widget build(BuildContext context) {
+    String imageUrl = widget.product.imageUrl;
     return Card(
       margin: EdgeInsets.all(20.0),
       child: Column(
@@ -67,7 +68,7 @@ class ProductCardState extends State<ProductCard> {
           Container(
             height: 200.0,
             margin: EdgeInsets.all(10.0),
-            child: Image.network(widget.product.imageUrl),
+            child: Image(image: NetworkImage(imageUrl),),
           ),
           Container(
             height: 60.0,

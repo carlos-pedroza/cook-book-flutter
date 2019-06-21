@@ -54,7 +54,7 @@ class ProductListTabState extends State<ProductListTab> {
                   padding: EdgeInsets.only(bottom: 10.0),
                   child: ListTile(
                     leading: CircleAvatar(
-                      backgroundImage:
+                      backgroundImage: 
                           NetworkImage(model.allProducts[index].imageUrl),
                     ),
                     title: Text(model.allProducts[index].title),

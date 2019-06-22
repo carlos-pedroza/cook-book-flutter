@@ -14,7 +14,7 @@ mixin ProductsModel on ConectedModel {
   List<Product> get mainProducts {
     return !isFilterFavorite
         ? allProducts
-        : allProducts.where((p) => p.isFavorite);
+        : List.from(products.where((p) => p.isFavorite));
   }
 
 
@@ -22,26 +22,6 @@ mixin ProductsModel on ConectedModel {
   Product get(String _id) {
     return products.firstWhere((Product _product) => _product.id == _id,
         orElse: () => null);
-  }
-
-  void update(Product editProduct) {
-    Product product = products.firstWhere(
-        (Product _product) => _product.id == editProduct.id,
-        orElse: () => null);
-    product.title = editProduct.title;
-    product.description = editProduct.description;
-    product.imageUrl = editProduct.imageUrl;
-    product.price = editProduct.price;
-    product.userEmail = authUser.email;
-    product.userID = authUser.id;
-  }
-
-  void delete(String _id) {
-    Product product =
-        products.firstWhere((Product p) => p.id == _id, orElse: () => null);
-    if (product != null) {
-      products.remove(product);
-    }
   }
 
   Product preparedProduct({Product product}) {

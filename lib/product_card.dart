@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import './models/product.dart';
 import './widgets/product/price_tag.dart';
 import './widgets/product/address_tag.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class ProductCard extends StatefulWidget {
   final Product product;
@@ -14,7 +15,6 @@ class ProductCard extends StatefulWidget {
   State<StatefulWidget> createState() {
     return ProductCardState();
   }
-
 }
 
 class ProductCardState extends State<ProductCard> {
@@ -60,7 +60,22 @@ class ProductCardState extends State<ProductCard> {
 
   @override
   Widget build(BuildContext context) {
-    String imageUrl = widget.product.imageUrl;
+    final String imageUrl = widget.product.imageUrl;
+    final loading = new Image(
+      image: new AssetImage("assets/images/loading.png"),
+      fit: BoxFit.none,
+    );
+    final photo = Stack(
+          children: <Widget>[
+            Center(child: CircularProgressIndicator()),
+            Center(
+              child: FadeInImage.memoryNetwork(
+                placeholder: kTransparentImage,
+                image: imageUrl,
+              ),
+            ),
+          ],
+        );
     return Card(
       margin: EdgeInsets.all(20.0),
       child: Column(
@@ -68,7 +83,9 @@ class ProductCardState extends State<ProductCard> {
           Container(
             height: 200.0,
             margin: EdgeInsets.all(10.0),
-            child: Image(image: NetworkImage(imageUrl),),
+            child: Center(
+              child: photo,
+            ),
           ),
           Container(
             height: 60.0,

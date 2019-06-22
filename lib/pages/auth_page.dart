@@ -217,6 +217,7 @@ void _submit(BuildContext context, GlobalKey<FormState> _formKey, User user, Mai
   if (_formKey.currentState.validate() == true) {
     _formKey.currentState.save();
     model.login(user);
+    model.getHttpProducts().then((bool res) { });
     SnackOk(context);
     Navigator.pushReplacementNamed(context, '/home');
   } else {

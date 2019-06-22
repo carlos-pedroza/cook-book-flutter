@@ -4,16 +4,16 @@ import 'package:scoped_model/scoped_model.dart';
 import '../../scope_models/main_model.dart';
 
 class ProductListTab extends StatefulWidget {
+  bool isLoading = false;
+
   @override
   State<StatefulWidget> createState() {
     return ProductListTabState();
   }
-
 }
 
 class ProductListTabState extends State<ProductListTab> {
-  Widget _buttonEditProduct(
-      BuildContext context, int index, MainModel model) {
+  Widget _buttonEditProduct(BuildContext context, int index, MainModel model) {
     return IconButton(
         icon: Icon(Icons.edit),
         onPressed: () {
@@ -21,13 +21,16 @@ class ProductListTabState extends State<ProductListTab> {
             MaterialPageRoute(builder: (BuildContext context) {
               return ProductEditTab(model.allProducts[index]);
             }),
-          ).then((dynamic value ) {
+          ).then((dynamic value) {
             Navigator.pop(context);
           });
         });
   }
 
   Widget createList(BuildContext context, MainModel model) {
+    if (widget.isLoading == true) {
+      return CircularProgressIndicator();
+    }
     if (model.allProducts.length == 0) {
       return Center(
         child: Text('No products'),
@@ -43,7 +46,10 @@ class ProductListTabState extends State<ProductListTab> {
             onDismissed: (DismissDirection direction) {
               if (direction == DismissDirection.endToStart) {
                 setState(() {
-                  model.delete(model.allProducts[index].id);
+                  widget.isLoading = true;
+                  model.delete(model.allProducts[index].id).then((bool result) {
+                    widget.isLoading = false;
+                  });
                 });
               }
             },
@@ -54,7 +60,7 @@ class ProductListTabState extends State<ProductListTab> {
                   padding: EdgeInsets.only(bottom: 10.0),
                   child: ListTile(
                     leading: CircleAvatar(
-                      backgroundImage: 
+                      backgroundImage:
                           NetworkImage(model.allProducts[index].imageUrl),
                     ),
                     title: Text(model.allProducts[index].title),

@@ -1,7 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:uuid/uuid.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'dart:async';
 
 import '../models/user.dart';
 import '../models/product.dart';
@@ -11,9 +13,17 @@ mixin ConectedModel on Model {
   Uuid uuid = new Uuid();
   bool isFilterFavorite = false;
 
+  bool _isLoading = true;
+  bool get isLoading {
+    return _isLoading;
+  }
+  set isLoading(bool value) {
+    _isLoading = value;
+  }
+
   User authUser;
 
-  void add(Product product) async {
+  Future<bool> add(Product product) async {
     product.userID = authUser.id;
     product.userEmail = authUser.email;
     String uri = "https://flutter-products-9db8e.firebaseio.com/products.json";
@@ -23,6 +33,29 @@ mixin ConectedModel on Model {
       product.id = resp["name"]; //uuid.v1();
       products.add(product);
       notifyListeners();
+      return true;
+    });
+  }
+
+  Future<bool> update(Product editProduct) async {
+    String url =
+        "https://flutter-products-9db8e.firebaseio.com/products/${editProduct.id}.json";
+    http.put(url, body: editProduct.toJson()).then((http.Response response) {
+      getHttpProducts().then((bool result) {
+        notifyListeners();
+        return true;
+      });
+    });
+  }
+
+  Future<bool> delete(String _id) async {
+    products.removeWhere((Product p)=>p.id==_id);
+    String uri = "https://flutter-products-9db8e.firebaseio.com/products/${_id}.json";
+    http.delete(uri).then((http.Response resp) {
+      getHttpProducts().then((bool result) {
+        notifyListeners();
+        return true;
+      });
     });
   }
 
@@ -30,19 +63,28 @@ mixin ConectedModel on Model {
     var uuid = new Uuid();
     authUser = User(id: uuid.v1(), email: user.email, password: user.password);
     launchTest();
-    getHttpProducts();
   }
 
-  getHttpProducts() {
+  clearProducts() {
+    products = [];
+  }
+
+  Future<bool> getHttpProducts() async {
+    clearProducts();
+    isLoading = true;
     String uri = "https://flutter-products-9db8e.firebaseio.com/products.json";
     http.get(uri).then((http.Response resp) {
-      Map<String, dynamic> mapProducts = jsonDecode(resp.body);
-      mapProducts.forEach((String _id, dynamic _productMap) {
-        Product product = Product.get(_productMap);
-        product.id = _id;
-        products.add(product);
-      });
+      if (resp.body != "null") {
+        Map<String, dynamic> mapProducts = jsonDecode(resp.body);
+        mapProducts.forEach((String _id, dynamic _productMap) {
+          Product product = Product.get(_productMap);
+          product.id = _id;
+          products.add(product);
+        });
+      }
+      isLoading = false;
       notifyListeners();
+      return true;
     });
   }
 
@@ -68,4 +110,5 @@ mixin ConectedModel on Model {
         description: "A8",
         price: 150595.34));*/
   }
+
 }

@@ -87,13 +87,54 @@ class ProductEditTabState extends State<ProductEditTab> {
     );
   }
 
+  Widget getButtonContent = Text(
+    'SAVE',
+    style: TextStyle(
+      fontSize: 20.0,
+    ),
+  );
+
+  buttonNormal() {
+    getButtonContent = Text(
+      'SAVE',
+      style: TextStyle(
+        fontSize: 20.0,
+      ),
+    );
+  }
+
+  buttonLoading() {
+    getButtonContent = Row(
+      children: <Widget>[
+        Expanded(
+          child: Container(
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
+          ),
+        ),
+        Expanded(
+          child: Center(
+            child: Text(
+              'SAVING',
+              style: TextStyle(
+                fontSize: 20.0,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget buttonSave(BuildContext context, ProductsModel model) {
     return Container(
       margin: EdgeInsets.all(30.0),
+      height: 60.0,
       child: RaisedButton(
         color: Theme.of(context).primaryColor,
         textColor: Colors.white,
-        child: Text('SAVE'),
+        child: getButtonContent,
         onPressed: () {
           saveProduct(context, model);
         },
@@ -105,13 +146,19 @@ class ProductEditTabState extends State<ProductEditTab> {
     if (_formKey.currentState.validate() == true) {
       _formKey.currentState.save();
       setState(() {
+        buttonLoading();
         if (this._product.id == "") {
-          model.add(this._product);
+          model.add(this._product).then((bool result) {
+            buttonNormal();
+            Navigator.pop(context);
+          });
         } else {
-          model.update(this._product);
+          model.update(this._product).then((bool result) {
+            buttonNormal();
+            Navigator.pop(context);
+          });
         }
       });
-      Navigator.pop(context);
     }
   }
 

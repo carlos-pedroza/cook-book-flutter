@@ -25,6 +25,7 @@ dependencies:
   uuid: 2.0.1
   scoped_model: ^1.0.1
   http: ^0.12.0+2
+  transparent_image: ^1.0.0
 
 dev_dependencies:
   flutter_test:
@@ -47,6 +48,7 @@ flutter:
     - assets/food.jpg
     - assets/images/logo100.png
     - assets/images/flutter_ico.png
+    - assets/images/loading.png
   #  - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

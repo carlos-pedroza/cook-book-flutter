@@ -17,6 +17,7 @@ mixin ConectedModel on Model {
   bool get isLoading {
     return _isLoading;
   }
+
   set isLoading(bool value) {
     _isLoading = value;
   }
@@ -49,8 +50,9 @@ mixin ConectedModel on Model {
   }
 
   Future<bool> delete(String _id) async {
-    products.removeWhere((Product p)=>p.id==_id);
-    String uri = "https://flutter-products-9db8e.firebaseio.com/products/${_id}.json";
+    products.removeWhere((Product p) => p.id == _id);
+    String uri =
+        "https://flutter-products-9db8e.firebaseio.com/products/${_id}.json";
     http.delete(uri).then((http.Response resp) {
       getHttpProducts().then((bool result) {
         notifyListeners();
@@ -74,17 +76,23 @@ mixin ConectedModel on Model {
     isLoading = true;
     String uri = "https://flutter-products-9db8e.firebaseio.com/products.json";
     http.get(uri).then((http.Response resp) {
-      if (resp.body != "null") {
-        Map<String, dynamic> mapProducts = jsonDecode(resp.body);
-        mapProducts.forEach((String _id, dynamic _productMap) {
-          Product product = Product.get(_productMap);
-          product.id = _id;
-          products.add(product);
-        });
+      if (resp.statusCode == 200 || resp.statusCode == 201) {
+        if (resp.body != "null") {
+          Map<String, dynamic> mapProducts = jsonDecode(resp.body);
+          mapProducts.forEach((String _id, dynamic _productMap) {
+            Product product = Product.get(_productMap);
+            product.id = _id;
+            products.add(product);
+          });
+        }
+        isLoading = false;
+        notifyListeners();
+        return true;
       }
+    }).catchError((errorResult) {
       isLoading = false;
       notifyListeners();
-      return true;
+      return false;
     });
   }
 
@@ -110,5 +118,4 @@ mixin ConectedModel on Model {
         description: "A8",
         price: 150595.34));*/
   }
-
 }

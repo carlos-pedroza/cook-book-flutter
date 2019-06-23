@@ -2,6 +2,7 @@ import 'package:first_app/pages/tabs/product_edit_tab.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import '../../scope_models/main_model.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 class ProductListTab extends StatefulWidget {
   bool isLoading = false;
@@ -74,6 +75,55 @@ class ProductListTabState extends State<ProductListTab> {
         },
         itemCount: model.allProducts.length,
       );
+      
+      /*
+      return Center(
+        child: Slidable(
+          actionPane: SlidableDrawerActionPane(),
+          actionExtentRatio: 0.25,
+          child: Container(
+            color: Colors.white,
+            child: ListTile(
+              leading: CircleAvatar(
+                backgroundColor: Colors.indigoAccent,
+                child: Text('3'),
+                foregroundColor: Colors.white,
+              ),
+              title: Text('Tile n°3'),
+              subtitle: Text('SlidableDrawerDelegate'),
+            ),
+          ),
+          actions: <Widget>[
+            IconSlideAction(
+              caption: 'Archive',
+              color: Colors.blue,
+              icon: Icons.archive,
+              onTap: () => print('Archive'),
+            ),
+            IconSlideAction(
+              caption: 'Share',
+              color: Colors.indigo,
+              icon: Icons.share,
+              onTap: () => print('Share'),
+            ),
+          ],
+          secondaryActions: <Widget>[
+            IconSlideAction(
+              caption: 'More',
+              color: Colors.black45,
+              icon: Icons.more_horiz,
+              onTap: () => print("more"),
+            ),
+            IconSlideAction(
+              caption: 'Delete',
+              color: Colors.red,
+              icon: Icons.delete,
+              onTap: () => print('Delete'),
+            ),
+          ],
+        ),
+      );
+      */
     }
   }
 

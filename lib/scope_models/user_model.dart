@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:scoped_model/scoped_model.dart';
 import '../scope_models/conected_model.dart';
 import 'package:uuid/uuid.dart';
 import '../models/user.dart';

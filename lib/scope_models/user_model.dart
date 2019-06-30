@@ -8,9 +8,10 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
 import '../utils/message.dart';
+import '../utils/api_key.dart';
 
 mixin UserModel on ConectedModel {
-  String _apiKey = "AIzaSyAAn1xTcVmqpvTIkOfSta_A92AjScDDRf4";
+  String _apiKey = apiKey.key;
 
   User _user = User(email: "", password: "");
   User get user {

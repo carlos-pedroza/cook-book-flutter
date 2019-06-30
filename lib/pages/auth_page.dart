@@ -6,6 +6,7 @@ import '../models/user.dart';
 import '../scope_models/main_model.dart';
 import '../scope_models/user_model.dart';
 
+
 class AuthPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {

@@ -153,7 +153,7 @@ class RegisterPageState extends State<RegisterPage> {
           Navigator.pop(context);
         }
         else {
-          print("ERROR: ");
+          
         }
         print(response.message);
       });

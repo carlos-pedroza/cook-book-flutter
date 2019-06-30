@@ -15,7 +15,8 @@
 *.iws
 .idea/
 
-
+#api.key
+lib/utils/api_key.dart
 
 # Visual Studio Code related
 .vscode/

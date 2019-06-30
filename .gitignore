@@ -15,7 +15,8 @@
 *.iws
 .idea/
 
-
+#api.key
+.lib/utils/hidde/
 
 # Visual Studio Code related
 .vscode/

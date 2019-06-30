@@ -16,7 +16,7 @@
 .idea/
 
 #api.key
-.lib/utils/hidde/
+lib/utils/hidde/
 
 # Visual Studio Code related
 .vscode/

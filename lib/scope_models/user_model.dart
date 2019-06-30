@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
 import '../utils/message.dart';
-import '../utils/api_key.dart';
+import '../utils/hidde/api_key.dart';
 
 mixin UserModel on ConectedModel {
   String _apiKey = apiKey.key;

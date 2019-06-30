@@ -16,7 +16,7 @@
 .idea/
 
 #api.key
-lib/utils/hidde/
+lib/utils/api_key.dart
 
 # Visual Studio Code related
 .vscode/

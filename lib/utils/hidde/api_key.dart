@@ -1,3 +1,3 @@
 class apiKey {
-  static String key = "AIzaSyAAn1xTcVmqpvTIkOfSta_A92AjScDDRf4";
+  static String key = "";
 }

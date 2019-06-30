@@ -4,6 +4,7 @@ import 'package:scoped_model/scoped_model.dart';
 
 import '../models/user.dart';
 import '../scope_models/main_model.dart';
+import '../scope_models/user_model.dart';
 
 class AuthPage extends StatefulWidget {
   @override
@@ -13,56 +14,61 @@ class AuthPage extends StatefulWidget {
 }
 
 class AuthPageState extends State<AuthPage> {
-  User user = User(email: "", password: "");
   final GlobalKey<FormState> _formKey = GlobalKey();
 
   final TextStyle style =
       TextStyle(fontFamily: 'Verdana, Geneva, sans-serif', fontSize: 20.0);
   @override
   Widget build(BuildContext context) {
-    final emailField = TextFormField(
-      onSaved: (value) {
-        user.email = value.toLowerCase();
-      },
-      validator: (String email) {
-        /*if(email.isEmpty) {
+    Widget emailField(MainModel model) {
+      return TextFormField(
+        initialValue: model.user.email,
+        onSaved: (value) {
+          model.user.email = value.toLowerCase();
+        },
+        validator: (String email) {
+          /*if(email.isEmpty) {
           return 'The Email is required!';
         }
         if(!RegExp(r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?").hasMatch(email) == true) {
           return 'The Email should be in a correct format!';
         }
         */
-      },
-      keyboardType: TextInputType.emailAddress,
-      obscureText: false,
-      style: style,
-      decoration: InputDecoration(
-          filled: true,
-          fillColor: Color.fromRGBO(255, 255, 255, 0.7),
-          contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-          hintText: "Email",
-          border:
-              OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
-    );
-    final passwordField = TextFormField(
-      onSaved: (value) {
-        user.password = value;
-      },
-      validator: (String password) {
-        /*if(password.isEmpty) {
+        },
+        keyboardType: TextInputType.emailAddress,
+        obscureText: false,
+        style: style,
+        decoration: InputDecoration(
+            filled: true,
+            fillColor: Color.fromRGBO(255, 255, 255, 0.7),
+            contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+            hintText: "Email",
+            border:
+                OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
+      );
+    }
+
+    Widget passwordField(MainModel model) {
+      return TextFormField(
+        onSaved: (value) {
+          model.user.password = value;
+        },
+        validator: (String password) {
+          /*if(password.isEmpty) {
           return 'The password is required';
         }*/
-      },
-      obscureText: true,
-      style: style,
-      decoration: InputDecoration(
-          filled: true,
-          fillColor: Color.fromRGBO(255, 255, 255, 0.7),
-          contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-          hintText: "Password",
-          border:
-              OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
-    );
+        },
+        obscureText: true,
+        style: style,
+        decoration: InputDecoration(
+            filled: true,
+            fillColor: Color.fromRGBO(255, 255, 255, 0.7),
+            contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+            hintText: "Password",
+            border:
+                OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
+      );
+    }
 
     final assetsImage = new AssetImage(
         "assets/images/logo100.png"); //<- Creates an object that fetches an image.
@@ -95,45 +101,62 @@ class AuthPageState extends State<AuthPage> {
       ),
     );
 
-    final formBox = Center(
-      child: Form(
-        key: _formKey,
-        child: Padding(
-          padding: const EdgeInsets.all(36.0),
-          child: ListView(
-            children: <Widget>[
-              Container(
-                margin: EdgeInsets.all(20.0),
-                padding: EdgeInsets.all(20.0),
-                decoration: new BoxDecoration(
-                  color: Color.fromRGBO(0, 0, 0, 0.5),
-                  borderRadius: new BorderRadius.only(
-                    topLeft: const Radius.circular(40.0),
-                    topRight: const Radius.circular(40.0),
-                    bottomLeft: const Radius.circular(40.0),
-                    bottomRight: const Radius.circular(40.0),
+    Widget register(MainModel model) {
+      return FlatButton(
+        child: Text(
+          'register',
+          style: TextStyle(color: Colors.white),
+        ),
+        onPressed: () {
+          model.clearUser();
+          Navigator.pushNamed(context, '/register').then((_user) {});
+        },
+      );
+    }
+
+    final formBox = ScopedModelDescendant<MainModel>(
+        builder: (BuildContext context, Widget child, MainModel model) {
+      return Center(
+        child: Form(
+          key: _formKey,
+          child: Padding(
+            padding: const EdgeInsets.all(36.0),
+            child: ListView(
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.all(20.0),
+                  padding: EdgeInsets.all(20.0),
+                  decoration: new BoxDecoration(
+                    color: Color.fromRGBO(0, 0, 0, 0.5),
+                    borderRadius: new BorderRadius.only(
+                      topLeft: const Radius.circular(40.0),
+                      topRight: const Radius.circular(40.0),
+                      bottomLeft: const Radius.circular(40.0),
+                      bottomRight: const Radius.circular(40.0),
+                    ),
+                  ),
+                  child: SizedBox(
+                    height: 100.0,
+                    child: image,
                   ),
                 ),
-                child: SizedBox(
-                  height: 100.0,
-                  child: image,
+                SizedBox(height: 45.0),
+                emailField(model),
+                SizedBox(height: 25.0),
+                passwordField(model),
+                SizedBox(height: 35.0),
+                LoginButton(style: style, formKey: _formKey, model: model),
+                _rememberUserSwitch,
+                SizedBox(
+                  height: 15.0,
                 ),
-              ),
-              SizedBox(height: 45.0),
-              emailField,
-              SizedBox(height: 25.0),
-              passwordField,
-              SizedBox(height: 35.0),
-              LoginButton(style, user, _formKey),
-              _rememberUserSwitch,
-              SizedBox(
-                height: 15.0,
-              ),
-            ],
+                register(model),
+              ],
+            ),
           ),
         ),
-      ),
-    );
+      );
+    });
 
     String imgH = "";
     String imgV = "";
@@ -168,10 +191,11 @@ class AuthPageState extends State<AuthPage> {
 
 class LoginButton extends StatelessWidget {
   TextStyle style;
-  User user;
-  final GlobalKey<FormState> _formKey;
+  GlobalKey<FormState> formKey;
+  MainModel model;
 
-  LoginButton(this.style, this.user, this._formKey);
+  LoginButton(
+      {@required this.style, @required this.formKey, @required this.model});
 
   @override
   Widget build(BuildContext context) {
@@ -185,7 +209,7 @@ class LoginButton extends StatelessWidget {
               minWidth: MediaQuery.of(context).size.width,
               padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
               onPressed: () {
-                _submit(context, _formKey, user, model);
+                _submit(context, formKey, model.user, model);
               },
               child: Text("Login",
                   textAlign: TextAlign.center,
@@ -213,11 +237,12 @@ void SnackError(BuildContext context) {
   Scaffold.of(context).showSnackBar(snackBar);
 }
 
-void _submit(BuildContext context, GlobalKey<FormState> _formKey, User user, MainModel model) {
+void _submit(BuildContext context, GlobalKey<FormState> _formKey, User user,
+    MainModel model) {
   if (_formKey.currentState.validate() == true) {
     _formKey.currentState.save();
     model.login(user);
-    model.getHttpProducts().then((bool res) { });
+    model.getHttpProducts().then((bool res) {});
     SnackOk(context);
     Navigator.pushReplacementNamed(context, '/home');
   } else {

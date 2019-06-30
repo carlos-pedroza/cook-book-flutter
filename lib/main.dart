@@ -6,6 +6,8 @@ import 'package:flutter/services.dart';
 import './pages/auth_page.dart';
 import './pages/product_manager_page.dart';
 import './pages/home_page.dart';
+import './pages/register_page.dart';
+
 import './pages/product_delete_page.dart';
 import './pages/product_detail_page.dart';
 
@@ -42,7 +44,8 @@ class _MyAppState extends State<MyApp> {
               routes: {
                 '/': (BuildContext context) => AuthPage(),
                 '/home': (BuildContext context) => HomePage(),
-                '/admin': (BuildContext context) => ProductManagerPage()
+                '/admin': (BuildContext context) => ProductManagerPage(),
+                '/register' : (BuildContext context) => RegisterPage()
               },
               onGenerateRoute: (RouteSettings settings) {
                 final List<String> pathElements = settings.name.split('/');

@@ -5,6 +5,7 @@ import '../product_manager.dart';
 import '../product_control.dart';
 
 import '../utils/custom_list_tile.dart';
+import '../ui_elements/logout_list_tile.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -86,6 +87,7 @@ class HomeState extends State<HomePage> {
                 label: 'Share',
                 onTap: () {},
               ),
+              LogoutListTile(),
             ],
           ),
         ),
@@ -94,7 +96,9 @@ class HomeState extends State<HomePage> {
           actions: <Widget>[
             IconButton(
               icon: Icon(Icons.favorite),
-              color: model.isFilterFavorite ? Colors.lightBlueAccent : Colors.white,
+              color: model.isFilterFavorite
+                  ? Colors.lightBlueAccent
+                  : Colors.white,
               onPressed: () {
                 setState(() {
                   model.toggleFilterFavorite();

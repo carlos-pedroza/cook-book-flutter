@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import '../models/user.dart';
 
 import 'package:scoped_model/scoped_model.dart';
@@ -16,9 +17,15 @@ class RegisterPage extends StatefulWidget {
 
 class RegisterPageState extends State<RegisterPage> {
   final GlobalKey<FormState> _formKey = GlobalKey();
+  MainModel _model;
 
   TextStyle style() {
     return TextStyle(fontFamily: 'Verdana, Geneva, sans-serif', fontSize: 18.0);
+  }
+
+  @override
+  initState() {
+    super.initState();
   }
 
   static InputDecoration inputDecoration(String hint) {
@@ -49,9 +56,7 @@ class RegisterPageState extends State<RegisterPage> {
           if (value.isEmpty) {
             return 'The Email is required!';
           }
-          if (!RegExp(r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?")
-                  .hasMatch(value) ==
-              true) {
+          if (!RegExp(model.emailValid).hasMatch(value) == true) {
             return 'The Email should be in a correct format!';
           }
         },
@@ -103,25 +108,23 @@ class RegisterPageState extends State<RegisterPage> {
   }
 
   Widget buttonRegister(BuildContext context, MainModel model) {
-    return InkWell(
-      onTap: () {
-        save(model);
-      },
-      child: new Container(
-        margin: EdgeInsets.only(top: 30.0),
-        height: 50.0,
-        decoration: new BoxDecoration(
-          color: Colors.blueAccent,
-          border: new Border.all(color: Colors.white, width: 2.0),
-          borderRadius: new BorderRadius.circular(20.0),
-        ),
-        child: new Center(
-          child: new Text(
-            'Register',
-            style: new TextStyle(fontSize: 18.0, color: Colors.white),
-          ),
-        ),
+    Widget button = CupertinoButton.filled(
+      borderRadius: BorderRadius.all(Radius.circular(16.0)),
+      child: Container(
+        child: Text('SIGNUP'),
       ),
+      onPressed: () {
+        save(model).then((value) {
+          model.isLoading = false;
+          if (value) {
+            Navigator.pop(context);
+          }
+        });
+      },
+    );
+
+    return Center(
+      child: !model.isLoading ? button : CircularProgressIndicator(),
     );
   }
 
@@ -136,7 +139,10 @@ class RegisterPageState extends State<RegisterPage> {
               email(model),
               password(model),
               confirmPassword(model),
-              buttonRegister(context, model),
+              Container(
+                margin: EdgeInsets.only(top: 30.0),
+                child: buttonRegister(context, model),
+              ),
             ],
           ),
         ),
@@ -145,21 +151,43 @@ class RegisterPageState extends State<RegisterPage> {
     });
   }
 
-  void save(MainModel model) {
-    _formKey.currentState.save();
-    if (_formKey.currentState.validate() == true) {
-      model.signup(model.user).then((Message response) {
-        if(response.result==true) {
-          Navigator.pop(context);
+  Future<bool> save(MainModel model) async {
+    Message _response;
+    bool _resultBnd = false;
+    try {
+      _formKey.currentState.save();
+      if (_formKey.currentState.validate() == true) {
+        _response = await model.signup(model.user);
+        if (_response.result == true) {
+          _resultBnd = true;
+        } else {
+          dialogError(_response);
         }
-        else {
-          
-        }
-        print(response.message);
-      });
-    } else {
-      print('Fail');
+        print(_response.message);
+      }
+      return _resultBnd;
+    } catch (e) {
+      print(e);
     }
+  }
+
+  void dialogError(Message _response) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Ocurrio un error:"),
+            content: Text(_response.message),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
   }
 
   @override

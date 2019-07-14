@@ -7,13 +7,14 @@ import 'dart:async';
 
 import '../models/user.dart';
 import '../models/product.dart';
+import '../enums/global.dart';
 
 mixin ConectedModel on Model {
   List<Product> products = [];
   Uuid uuid = new Uuid();
   bool isFilterFavorite = false;
 
-  bool _isLoading = true;
+  bool _isLoading = false;
   bool get isLoading {
     return _isLoading;
   }
@@ -23,6 +24,7 @@ mixin ConectedModel on Model {
   }
 
   User authUser;
+  
 
   Future<bool> add(Product product) async {
     product.userID = authUser.id;
@@ -40,7 +42,7 @@ mixin ConectedModel on Model {
 
   Future<bool> update(Product editProduct) async {
     String url =
-        "https://flutter-products-9db8e.firebaseio.com/products/${editProduct.id}.json";
+        "https://flutter-products-9db8e.firebaseio.com/products/${editProduct.id}.json?auth=${authUser.idToken}";
     http.put(url, body: editProduct.toJson()).then((http.Response response) {
       getHttpProducts().then((bool result) {
         notifyListeners();
@@ -52,19 +54,13 @@ mixin ConectedModel on Model {
   Future<bool> delete(String _id) async {
     products.removeWhere((Product p) => p.id == _id);
     String uri =
-        "https://flutter-products-9db8e.firebaseio.com/products/${_id}.json";
+        "https://flutter-products-9db8e.firebaseio.com/products/${_id}.json?auth=${authUser.idToken}";
     http.delete(uri).then((http.Response resp) {
       getHttpProducts().then((bool result) {
         notifyListeners();
         return true;
       });
     });
-  }
-
-  void login(User user) {
-    var uuid = new Uuid();
-    authUser = User(id: uuid.v1(), email: user.email, password: user.password);
-    launchTest();
   }
 
   clearProducts() {
@@ -74,7 +70,7 @@ mixin ConectedModel on Model {
   Future<bool> getHttpProducts() async {
     clearProducts();
     isLoading = true;
-    String uri = "https://flutter-products-9db8e.firebaseio.com/products.json";
+    String uri = "https://flutter-products-9db8e.firebaseio.com/products.json?auth=${authUser.idToken}";
     http.get(uri).then((http.Response resp) {
       if (resp.statusCode == 200 || resp.statusCode == 201) {
         if (resp.body != "null") {

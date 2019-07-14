@@ -1,7 +1,7 @@
 import "package:flutter/material.dart";
 import 'package:scoped_model/scoped_model.dart';
 
-import './product_card.dart';
+import './ui_elements/product_card.dart';
 import './scope_models/main_model.dart';
 import 'dart:async';
 

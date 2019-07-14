@@ -5,7 +5,9 @@ import 'package:scoped_model/scoped_model.dart';
 import '../models/user.dart';
 import '../scope_models/main_model.dart';
 import '../scope_models/user_model.dart';
-
+import '../utils/message.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../enums/global.dart';
 
 class AuthPage extends StatefulWidget {
   @override
@@ -19,6 +21,7 @@ class AuthPageState extends State<AuthPage> {
 
   final TextStyle style =
       TextStyle(fontFamily: 'Verdana, Geneva, sans-serif', fontSize: 20.0);
+
   @override
   Widget build(BuildContext context) {
     Widget emailField(MainModel model) {
@@ -28,13 +31,12 @@ class AuthPageState extends State<AuthPage> {
           model.user.email = value.toLowerCase();
         },
         validator: (String email) {
-          /*if(email.isEmpty) {
-          return 'The Email is required!';
-        }
-        if(!RegExp(r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?").hasMatch(email) == true) {
-          return 'The Email should be in a correct format!';
-        }
-        */
+          if (email.isEmpty) {
+            return 'The Email is required!';
+          }
+          if (!RegExp(model.emailValid).hasMatch(email) == true) {
+            return 'The Email should be in a correct format!';
+          }
         },
         keyboardType: TextInputType.emailAddress,
         obscureText: false,
@@ -55,9 +57,9 @@ class AuthPageState extends State<AuthPage> {
           model.user.password = value;
         },
         validator: (String password) {
-          /*if(password.isEmpty) {
-          return 'The password is required';
-        }*/
+          if (password.isEmpty) {
+            return 'The password is required';
+          }
         },
         obscureText: true,
         style: style,
@@ -105,7 +107,7 @@ class AuthPageState extends State<AuthPage> {
     Widget register(MainModel model) {
       return FlatButton(
         child: Text(
-          'register',
+          'SIGNUP',
           style: TextStyle(color: Colors.white),
         ),
         onPressed: () {
@@ -146,7 +148,13 @@ class AuthPageState extends State<AuthPage> {
                 SizedBox(height: 25.0),
                 passwordField(model),
                 SizedBox(height: 35.0),
-                LoginButton(style: style, formKey: _formKey, model: model),
+                !model.isLoading
+                    ? loginButton(
+                        context_main: context,
+                        style: style,
+                        formKey: _formKey,
+                        model: model)
+                    : CircularProgressIndicator(),
                 _rememberUserSwitch,
                 SizedBox(
                   height: 15.0,
@@ -188,18 +196,8 @@ class AuthPageState extends State<AuthPage> {
       ),
     );
   }
-}
 
-class LoginButton extends StatelessWidget {
-  TextStyle style;
-  GlobalKey<FormState> formKey;
-  MainModel model;
-
-  LoginButton(
-      {@required this.style, @required this.formKey, @required this.model});
-
-  @override
-  Widget build(BuildContext context) {
+  Widget loginButton({BuildContext context_main, style, formKey, model}) {
     return Material(
       elevation: 5.0,
       borderRadius: BorderRadius.circular(30.0),
@@ -207,16 +205,16 @@ class LoginButton extends StatelessWidget {
       child: ScopedModelDescendant(
         builder: (BuildContext context, Widget child, MainModel model) =>
             MaterialButton(
-              minWidth: MediaQuery.of(context).size.width,
-              padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-              onPressed: () {
-                _submit(context, formKey, model.user, model);
-              },
-              child: Text("Login",
-                  textAlign: TextAlign.center,
-                  style: style.copyWith(
-                      color: Colors.white, fontWeight: FontWeight.bold)),
-            ),
+          minWidth: MediaQuery.of(context_main).size.width,
+          padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+          onPressed: () {
+            _submit(context_main, formKey, model.user, model);
+          },
+          child: Text("Login",
+              textAlign: TextAlign.center,
+              style: style.copyWith(
+                  color: Colors.white, fontWeight: FontWeight.bold)),
+        ),
       ),
     );
   }
@@ -242,11 +240,42 @@ void _submit(BuildContext context, GlobalKey<FormState> _formKey, User user,
     MainModel model) {
   if (_formKey.currentState.validate() == true) {
     _formKey.currentState.save();
-    model.login(user);
-    model.getHttpProducts().then((bool res) {});
-    SnackOk(context);
-    Navigator.pushReplacementNamed(context, '/home');
+    model.verifyPassword(model.user).then((Message resPayload) {
+      if (resPayload.result == true) {
+        model.login(model.user.email, resPayload.payload);
+        print(resPayload.payload);
+        SharedPreferences.getInstance().then((SharedPreferences prefs) {
+          prefs.setString(Global.token, model.authUser.idToken);
+          prefs.setString(Global.userID, model.authUser.id);
+          prefs.setString(Global.email, model.authUser.email);
+        });
+        model.getHttpProducts().then((bool res) {});
+        Navigator.pushNamed(context, '/home').then((_user) {});
+      } else {
+        dialogError(context, resPayload);
+        print(resPayload);
+      }
+    });
   } else {
     SnackError(context);
   }
+}
+
+void dialogError(BuildContext context, Message _response) {
+  showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Ocurrio un error:"),
+          content: Text(_response.message),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      });
 }

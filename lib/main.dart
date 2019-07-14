@@ -12,6 +12,9 @@ import './pages/product_delete_page.dart';
 import './pages/product_detail_page.dart';
 
 import './scope_models/main_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import './enums/global.dart';
+import './models/user.dart';
 
 //import 'package:flutter/rendering.dart';
 
@@ -25,10 +28,18 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  MainModel _model = MainModel();
+
+  @override
+  initState() {
+    verifyAuth(_model);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return ScopedModel<MainModel>(
-      model: MainModel(),
+      model: _model,
       child: ScopedModelDescendant<MainModel>(
         builder: (BuildContext context, Widget child, MainModel model) {
           return MaterialApp(
@@ -42,10 +53,11 @@ class _MyAppState extends State<MyApp> {
                   accentColor: Colors.lightGreen,
                   dividerColor: Color.fromRGBO(189, 189, 189, 1)),
               routes: {
-                '/': (BuildContext context) => AuthPage(),
+                '/': (BuildContext context) => _model.authUser!=null ? HomePage() : AuthPage(),
                 '/home': (BuildContext context) => HomePage(),
+                '/auth': (BuildContext context) => AuthPage(),
                 '/admin': (BuildContext context) => ProductManagerPage(),
-                '/register' : (BuildContext context) => RegisterPage()
+                '/register': (BuildContext context) => RegisterPage()
               },
               onGenerateRoute: (RouteSettings settings) {
                 final List<String> pathElements = settings.name.split('/');
@@ -55,7 +67,7 @@ class _MyAppState extends State<MyApp> {
                 if (pathElements[1] == 'detail') {
                   final String _id = pathElements[2];
                   Product _product = model.get(_id);
-                  if(_product != null) {
+                  if (_product != null) {
                     return MaterialPageRoute<bool>(
                       builder: (BuildContext context) =>
                           ProductDetailPage(_product),
@@ -71,5 +83,17 @@ class _MyAppState extends State<MyApp> {
         },
       ),
     );
+  }
+
+  void verifyAuth(MainModel model) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString(Global.token);
+    if (token != null) {
+      model.authUser = User(
+          id: prefs.getString(Global.userID),
+          email: prefs.getString(Global.email),
+          idToken: prefs.getString(Global.token));
+      model.getHttpProducts().then((bool res) {});
+    }
   }
 }

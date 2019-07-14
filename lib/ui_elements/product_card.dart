@@ -1,8 +1,8 @@
 import 'package:first_app/scope_models/products_model.dart';
 import 'package:flutter/material.dart';
-import './models/product.dart';
-import './widgets/product/price_tag.dart';
-import './widgets/product/address_tag.dart';
+import '../models/product.dart';
+import '../widgets/product/price_tag.dart';
+import '../widgets/product/address_tag.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class ProductCard extends StatefulWidget {

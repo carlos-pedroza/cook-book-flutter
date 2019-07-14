@@ -248,7 +248,9 @@ void _submit(BuildContext context, GlobalKey<FormState> _formKey, User user,
           prefs.setString(Global.token, model.authUser.idToken);
           prefs.setString(Global.userID, model.authUser.id);
           prefs.setString(Global.email, model.authUser.email);
+          prefs.setInt(Global.expiresIn, model.authUser.expiresIn);
         });
+        
         model.getHttpProducts().then((bool res) {});
         Navigator.pushNamed(context, '/home').then((_user) {});
       } else {

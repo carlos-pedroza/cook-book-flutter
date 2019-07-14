@@ -95,6 +95,7 @@ mixin UserModel on ConectedModel {
     prefs.remove(Global.userID);
     prefs.remove(Global.email);
     prefs.remove(Global.token);
+    prefs.remove(Global.expiresIn);
 
     return true;
   }

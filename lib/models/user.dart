@@ -6,7 +6,7 @@ class User {
   String password;
   String idToken;
   int expiresIn;
-  DateTime logonDate;
+  DateTime expiresDate;
 
   User(
       {this.id = "",
@@ -14,11 +14,16 @@ class User {
       this.password,
       this.idToken,
       this.expiresIn,
-      this.logonDate}) {
-    if (logonDate == null) {
+      this.expiresDate}) {
+    if (expiresDate == null) {
       if (this.expiresIn != null) {
-        logonDate = DateTime.now().add(Duration(seconds: expiresIn));
+        expiresDate = DateTime.now().add(Duration(seconds: expiresIn));
       }
     }
+  }
+
+  bool isExpired() {
+    DateTime now = DateTime.now();
+    return expiresDate.isAfter(now);
   }
 }

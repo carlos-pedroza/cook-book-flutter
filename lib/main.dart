@@ -53,7 +53,8 @@ class _MyAppState extends State<MyApp> {
                   accentColor: Colors.lightGreen,
                   dividerColor: Color.fromRGBO(189, 189, 189, 1)),
               routes: {
-                '/': (BuildContext context) => _model.authUser!=null ? HomePage() : AuthPage(),
+                '/': (BuildContext context) =>
+                    _model.authUser != null ? HomePage() : AuthPage(),
                 '/home': (BuildContext context) => HomePage(),
                 '/auth': (BuildContext context) => AuthPage(),
                 '/admin': (BuildContext context) => ProductManagerPage(),
@@ -90,10 +91,17 @@ class _MyAppState extends State<MyApp> {
     String token = prefs.getString(Global.token);
     if (token != null) {
       model.authUser = User(
-          id: prefs.getString(Global.userID),
-          email: prefs.getString(Global.email),
-          idToken: prefs.getString(Global.token));
-      model.getHttpProducts().then((bool res) {});
+        id: prefs.getString(Global.userID),
+        email: prefs.getString(Global.email),
+        idToken: prefs.getString(Global.token),
+        expiresIn: prefs.getInt(Global.expiresIn),
+        expiresDate: DateTime.parse(prefs.getString(Global.expiredDate)),
+      );
+      if (!model.authUser.isExpired()) {
+        model.getHttpProducts().then((bool res) {});
+      } else {
+        model.logout();
+      }
     }
   }
 }

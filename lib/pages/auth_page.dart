@@ -243,13 +243,16 @@ void _submit(BuildContext context, GlobalKey<FormState> _formKey, User user,
     model.verifyPassword(model.user).then((Message resPayload) {
       if (resPayload.result == true) {
         model.login(model.user.email, resPayload.payload);
-        print(resPayload.payload);
         SharedPreferences.getInstance().then((SharedPreferences prefs) {
           prefs.setString(Global.token, model.authUser.idToken);
           prefs.setString(Global.userID, model.authUser.id);
           prefs.setString(Global.email, model.authUser.email);
           prefs.setInt(Global.expiresIn, model.authUser.expiresIn);
+          prefs.setString(Global.expiredDate, model.authUser.expiresDate.toIso8601String());
+          model.setLogoutTime(model.authUser.expiresIn);
         });
+        print(model.authUser.expiresIn);
+        print(model.authUser.expiresDate);
         
         model.getHttpProducts().then((bool res) {});
         Navigator.pushNamed(context, '/home').then((_user) {});

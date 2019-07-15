@@ -11,6 +11,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../enums/global.dart';
 
 mixin UserModel on ConectedModel {
+  Timer _authTimer;
+
   final String _verifyPassword =
       "https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=${ApiKey.key}";
   final String _signup =
@@ -96,7 +98,12 @@ mixin UserModel on ConectedModel {
     prefs.remove(Global.email);
     prefs.remove(Global.token);
     prefs.remove(Global.expiresIn);
-
+    prefs.remove(Global.expiredDate);
+    _authTimer.cancel();
     return true;
+  }
+
+  void setLogoutTime(int seconds) {
+    _authTimer = Timer(Duration(seconds: seconds), logout);
   }
 }

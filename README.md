@@ -1,4 +1,4 @@
-# first_app
+# cook-book-flutter
 
 A new Flutter project.
 
